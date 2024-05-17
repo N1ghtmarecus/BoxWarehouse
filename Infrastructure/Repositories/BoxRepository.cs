@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
             return _boxes;
         }
 
-        public Box GetById(int id)
+        public Box GetByCutterId(int id)
         {
             return _boxes.SingleOrDefault(x => x.CutterID == id)!;
         }
