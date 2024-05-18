@@ -10,6 +10,7 @@ namespace Application.Mappings
         => new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<Box, BoxDto>();
+            cfg.CreateMap<BoxDto, Box>();
         })
         .CreateMapper();
     };

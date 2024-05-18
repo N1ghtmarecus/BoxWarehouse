@@ -6,5 +6,6 @@ namespace Application.Interfaces
     {
         IEnumerable<BoxDto> GetAllBoxes();
         BoxDto GetBoxByCutterId(int id);
+        BoxDto AddNewBox(BoxDto newBox);
     }
 }

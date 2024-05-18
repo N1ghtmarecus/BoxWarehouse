@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -25,6 +26,18 @@ namespace Application.Services
         public BoxDto GetBoxByCutterId(int id)
         {
             var box = _boxRepository.GetByCutterId(id);
+            return _mapper.Map<BoxDto>(box);
+        }
+
+        public BoxDto AddNewBox(BoxDto newBox)
+        {
+            if (newBox.CutterID == null)
+            {
+                throw new Exception("Cutter ID is required");
+            }
+
+            var box = _mapper.Map<Box>(newBox);
+            _boxRepository.Add(box);
             return _mapper.Map<BoxDto>(box);
         }
     }

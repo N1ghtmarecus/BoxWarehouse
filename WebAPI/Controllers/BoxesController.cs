@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var boxes = _boxService.GetAllBoxes();
+            var boxes = _boxService.GetAllBoxes().OrderBy(b => b.CutterID);
             return Ok(boxes);
         }
 
@@ -36,6 +36,14 @@ namespace WebAPI.Controllers
             }
 
             return Ok(box);
+        }
+
+        [SwaggerOperation(Summary = "Creates a new box")]
+        [HttpPost]
+        public IActionResult Create(BoxDto newBox)
+        {
+            var box = _boxService.AddNewBox(newBox);
+            return Created($"api/boxes/{box.CutterID}", box);
         }
     }
 }
