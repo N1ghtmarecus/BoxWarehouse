@@ -1,9 +1,4 @@
-
-using Application.Interfaces;
-using Application.Mappings;
-using Application.Services;
-using Domain.Interfaces;
-using Infrastructure.Repositories;
+using WebAPI.Installers;
 
 namespace WebAPI;
 
@@ -13,19 +8,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
-        builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.EnableAnnotations();
-        });
-
-        builder.Services.AddScoped<IBoxRepository, BoxRepository>();
-        builder.Services.AddScoped<IBoxService, BoxService>();
-        builder.Services.AddSingleton(AutoMapperConfig.Initialize());
+        builder.Services.InstallServicesInAssembly(builder.Configuration);
 
         var app = builder.Build();
 
@@ -39,7 +24,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 
