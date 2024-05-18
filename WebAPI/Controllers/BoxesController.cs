@@ -52,5 +52,13 @@ namespace WebAPI.Controllers
             _boxService.UpdateBox(updateBox);
             return NoContent();
         }
+
+        [SwaggerOperation(Summary = "Deletes a box by unique cutter ID")]
+        [HttpDelete("{cutterId}")]
+        public IActionResult Delete(int cutterId)
+        {
+            _boxService.DeleteBox(cutterId);
+            return NoContent();
+        }
     }
 }

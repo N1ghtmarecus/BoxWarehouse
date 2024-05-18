@@ -8,5 +8,6 @@ namespace Application.Interfaces
         BoxDto GetBoxByCutterId(int id);
         BoxDto AddNewBox(BoxDto newBox);
         void UpdateBox(BoxDto updateBox);
+        void DeleteBox(int id);
     }
 }

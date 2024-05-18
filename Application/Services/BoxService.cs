@@ -47,5 +47,11 @@ namespace Application.Services
             var box = _mapper.Map(updateBox, existingBox);
             _boxRepository.Update(box);
         }
+
+        public void DeleteBox(int id)
+        {
+            var box = _boxRepository.GetByCutterId(id);
+            _boxRepository.Delete(box);
+        }
     }
 }
