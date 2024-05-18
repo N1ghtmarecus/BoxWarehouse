@@ -31,7 +31,7 @@ namespace Application.Services
 
         public BoxDto AddNewBox(BoxDto newBox)
         {
-            if (newBox.CutterID == null)
+            if (newBox?.CutterID == null)
             {
                 throw new Exception("Cutter ID is required");
             }
@@ -39,6 +39,13 @@ namespace Application.Services
             var box = _mapper.Map<Box>(newBox);
             _boxRepository.Add(box);
             return _mapper.Map<BoxDto>(box);
+        }
+
+        public void UpdateBox(BoxDto updateBox)
+        {
+            var existingBox = _boxRepository.GetByCutterId(updateBox.CutterID);
+            var box = _mapper.Map(updateBox, existingBox);
+            _boxRepository.Update(box);
         }
     }
 }

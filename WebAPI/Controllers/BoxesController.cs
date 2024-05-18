@@ -1,6 +1,5 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -44,6 +43,14 @@ namespace WebAPI.Controllers
         {
             var box = _boxService.AddNewBox(newBox);
             return Created($"api/boxes/{box.CutterID}", box);
+        }
+
+        [SwaggerOperation(Summary = "Updates an existing box")]
+        [HttpPut]
+        public IActionResult Update(BoxDto updateBox)
+        {
+            _boxService.UpdateBox(updateBox);
+            return NoContent();
         }
     }
 }
