@@ -3,8 +3,10 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace WebAPI.Controllers
+namespace WebAPI.Controllers.V2
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class BoxesController : ControllerBase
@@ -21,7 +23,12 @@ namespace WebAPI.Controllers
         public IActionResult Get()
         {
             var boxes = _boxService.GetAllBoxes().OrderBy(b => b.CutterID);
-            return Ok(boxes);
+            return Ok(
+                new
+                {
+                    Posts = boxes,
+                    Count = boxes.Count()
+                });
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
