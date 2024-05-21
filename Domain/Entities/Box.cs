@@ -1,13 +1,31 @@
 ﻿using Domain.Common;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
+    [Table("Boxes")]
     public class Box : AuditableEntity
     {
+        [Key]
+        [Required]
+        [MaxLength(3)]
         public int CutterID { get; set; }
+
+        [Required]
+        [MaxLength(3)]
         public int Fefco { get; set; }
+
+        [Required]
+        [MaxLength(4)]
         public int Length { get; set; }
+
+        [Required]
+        [MaxLength(4)]
         public int Width { get; set; }
+
+        [Required]
+        [MaxLength(4)]
         public int Height { get; set; }
 
         public Box() { }
