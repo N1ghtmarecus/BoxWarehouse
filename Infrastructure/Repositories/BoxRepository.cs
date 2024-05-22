@@ -1,45 +1,47 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
 {
     public class BoxRepository : IBoxRepository
     {
-        private static readonly ISet<Box> _boxes = new HashSet<Box>()
+        private readonly BoxWarehouseContext _context;
+
+        public BoxRepository(BoxWarehouseContext context)
         {
-            new(001, 427, 100, 80, 60),
-            new(002, 427, 120, 100, 80),
-            new(003, 427, 200, 100, 100),
-            new(101, 201, 80, 70, 40),
-            new(102, 201, 90, 60, 80),
-            new(103, 201, 205, 115, 60)
-        };
+            _context = context;
+        }
 
         public IEnumerable<Box> GetAll()
         {
-            return _boxes;
+            return _context.Boxes;
         }
 
         public Box GetByCutterId(int id)
         {
-            return _boxes.SingleOrDefault(x => x.CutterID == id)!;
+            return _context.Boxes.SingleOrDefault(x => x.CutterID == id)!;
         }
 
         public Box Add(Box box)
         {
             box.Created = DateTime.UtcNow;
-            _boxes.Add(box);
+            _context.Boxes.Add(box);
+            _context.SaveChanges();
             return box;
         }
 
         public void Update(Box box)
         {
             box.LastModified = DateTime.UtcNow;
+            _context.Boxes.Update(box);
+            _context.SaveChanges();
         }
 
         public void Delete(Box box)
         {
-            _boxes.Remove(box);
+            _context.Boxes.Remove(box);
+            _context.SaveChanges();
         }
     }
 }
