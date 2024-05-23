@@ -11,6 +11,7 @@ namespace Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IBoxService, BoxService>();
+            services.AddScoped<ICosmosBoxService, CosmosBoxService>();
 
             return services;
         }
