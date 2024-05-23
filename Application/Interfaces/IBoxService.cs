@@ -4,10 +4,10 @@ namespace Application.Interfaces
 {
     public interface IBoxService
     {
-        IEnumerable<BoxDto> GetAllBoxes();
-        BoxDto GetBoxByCutterId(int id);
-        BoxDto AddNewBox(BoxDto newBox);
-        void UpdateBox(BoxDto updateBox);
-        void DeleteBox(int id);
+        Task<IEnumerable<BoxDto>> GetAllBoxesAsync();
+        Task<BoxDto> GetBoxByCutterIdAsync(int id);
+        Task<BoxDto> AddNewBoxAsync(BoxDto newBox);
+        Task UpdateBoxAsync(BoxDto updateBox);
+        Task DeleteBoxAsync(int id);
     }
 }

@@ -17,19 +17,19 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<BoxDto> GetAllBoxes()
+        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync()
         {
-            var boxes = _boxRepository.GetAll();
+            var boxes = await _boxRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
 
-        public BoxDto GetBoxByCutterId(int id)
+        public async Task<BoxDto> GetBoxByCutterIdAsync(int id)
         {
-            var box = _boxRepository.GetByCutterId(id);
+            var box = await _boxRepository.GetByCutterIdAsync(id);
             return _mapper.Map<BoxDto>(box);
         }
 
-        public BoxDto AddNewBox(BoxDto newBox)
+        public async Task<BoxDto> AddNewBoxAsync(BoxDto newBox)
         {
             if (newBox?.CutterID == null)
             {
@@ -37,21 +37,21 @@ namespace Application.Services
             }
 
             var box = _mapper.Map<Box>(newBox);
-            _boxRepository.Add(box);
-            return _mapper.Map<BoxDto>(box);
+            var result = await _boxRepository.AddAsync(box);
+            return _mapper.Map<BoxDto>(result);
         }
 
-        public void UpdateBox(BoxDto updateBox)
+        public async Task UpdateBoxAsync(BoxDto updateBox)
         {
-            var existingBox = _boxRepository.GetByCutterId(updateBox.CutterID);
+            var existingBox = await _boxRepository.GetByCutterIdAsync(updateBox.CutterID);
             var box = _mapper.Map(updateBox, existingBox);
-            _boxRepository.Update(box);
+            await _boxRepository.UpdateAsync(box!);
         }
 
-        public void DeleteBox(int id)
+        public async Task DeleteBoxAsync(int id)
         {
-            var box = _boxRepository.GetByCutterId(id);
-            _boxRepository.Delete(box);
+            var box = await _boxRepository.GetByCutterIdAsync(id);
+            await _boxRepository.DeleteAsync(box!);
         }
     }
 }

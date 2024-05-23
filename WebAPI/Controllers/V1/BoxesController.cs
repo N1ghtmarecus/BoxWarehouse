@@ -19,17 +19,18 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Retrieves all boxes")]
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var boxes = _boxService.GetAllBoxes().OrderBy(b => b.CutterID);
-            return Ok(boxes);
+            var boxes = await _boxService.GetAllBoxesAsync();
+            var sortedBoxes = boxes.OrderBy(x => x.CutterID);
+            return Ok(sortedBoxes);
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
         [HttpGet("{cutterId}")]
-        public IActionResult Get(int cutterId)
+        public async Task<IActionResult> Get(int cutterId)
         {
-            var box = _boxService.GetBoxByCutterId(cutterId);
+            var box = await _boxService.GetBoxByCutterIdAsync(cutterId);
             if (box == null)
             {
                 return NotFound();
@@ -40,25 +41,25 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Creates a new box")]
         [HttpPost]
-        public IActionResult Create(BoxDto newBox)
+        public async Task<IActionResult> Create(BoxDto newBox)
         {
-            var box = _boxService.AddNewBox(newBox);
+            var box = await _boxService.AddNewBoxAsync(newBox);
             return Created($"api/boxes/{box.CutterID}", box);
         }
 
         [SwaggerOperation(Summary = "Updates an existing box")]
         [HttpPut]
-        public IActionResult Update(BoxDto updateBox)
+        public async Task<IActionResult> Update(BoxDto updateBox)
         {
-            _boxService.UpdateBox(updateBox);
+            await _boxService.UpdateBoxAsync(updateBox);
             return NoContent();
         }
 
         [SwaggerOperation(Summary = "Deletes a box by unique cutter ID")]
         [HttpDelete("{cutterId}")]
-        public IActionResult Delete(int cutterId)
+        public async Task<IActionResult> Delete(int cutterId)
         {
-            _boxService.DeleteBox(cutterId);
+            await _boxService.DeleteBoxAsync(cutterId);
             return NoContent();
         }
     }
