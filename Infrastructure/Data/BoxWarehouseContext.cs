@@ -1,5 +1,7 @@
-﻿using Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.Data
 {
@@ -10,5 +12,24 @@ namespace Infrastructure.Data
         }
 
         public DbSet<Box> Boxes { get; set; }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is AuditableEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                ((AuditableEntity)entityEntry.Entity).LastModified = DateTime.Now;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((AuditableEntity)entityEntry.Entity).Created = DateTime.Now;
+                }
+            }
+
+                return base.SaveChanges();
+        }
     }
 }

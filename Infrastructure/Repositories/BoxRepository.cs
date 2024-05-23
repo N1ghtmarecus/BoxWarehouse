@@ -25,7 +25,6 @@ namespace Infrastructure.Repositories
 
         public Box Add(Box box)
         {
-            box.Created = DateTime.UtcNow;
             _context.Boxes.Add(box);
             _context.SaveChanges();
             return box;
@@ -33,7 +32,6 @@ namespace Infrastructure.Repositories
 
         public void Update(Box box)
         {
-            box.LastModified = DateTime.UtcNow;
             _context.Boxes.Update(box);
             _context.SaveChanges();
         }
