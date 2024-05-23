@@ -24,18 +24,21 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Box", b =>
                 {
-                    b.Property<int>("CutterID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(3)
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CutterID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CutterID")
+                        .HasMaxLength(3)
+                        .HasColumnType("int");
 
                     b.Property<int>("Fefco")
                         .HasMaxLength(3)
@@ -59,7 +62,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("int");
 
-                    b.HasKey("CutterID");
+                    b.HasKey("ID");
 
                     b.ToTable("Boxes");
                 });

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BoxWarehouseContext))]
-    [Migration("20240522212903_DropIDColumnAndAddAnotherOne")]
-    partial class DropIDColumnAndAddAnotherOne
+    [Migration("20240523110421_CreateBoxesTable")]
+    partial class CreateBoxesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CutterID")
+                        .HasMaxLength(3)
+                        .HasColumnType("int");
 
                     b.Property<int>("Fefco")
                         .HasMaxLength(3)

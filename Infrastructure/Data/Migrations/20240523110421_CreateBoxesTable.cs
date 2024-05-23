@@ -15,8 +15,9 @@ namespace Infrastructure.Migrations
                 name: "Boxes",
                 columns: table => new
                 {
-                    CutterID = table.Column<int>(type: "int", maxLength: 3, nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CutterID = table.Column<int>(type: "int", maxLength: 3, nullable: false),
                     Fefco = table.Column<int>(type: "int", maxLength: 3, nullable: false),
                     Length = table.Column<int>(type: "int", maxLength: 4, nullable: false),
                     Width = table.Column<int>(type: "int", maxLength: 4, nullable: false),
@@ -28,7 +29,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Boxes", x => x.CutterID);
+                    table.PrimaryKey("PK_Boxes", x => x.ID);
                 });
         }
 

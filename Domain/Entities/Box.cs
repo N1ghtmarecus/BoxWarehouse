@@ -8,6 +8,8 @@ namespace Domain.Entities
     public class Box : AuditableEntity
     {
         [Key]
+        public int ID { get; set; }
+
         [Required]
         [MaxLength(3)]
         public int CutterID { get; set; }
