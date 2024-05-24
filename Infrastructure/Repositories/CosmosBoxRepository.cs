@@ -18,7 +18,7 @@ namespace Infrastructure.Repositories
             return boxes;
         }
 
-        public async Task<CosmosBox> GetByCutterIdAsync(string id)
+        public async Task<CosmosBox> GetByIdAsync(string id)
         {
             return await _cosmosStore.FindAsync(id);
         }

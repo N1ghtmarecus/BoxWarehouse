@@ -4,7 +4,7 @@ using Domain.Entities.Cosmos;
 
 namespace Application.Dto.Cosmos
 {
-    public class CosmosBoxDto : IMap
+    public class UpdateCosmosBoxDto : IMap
     {
         public string? ID { get; set; }
         public int CutterID { get; set; }
@@ -15,8 +15,7 @@ namespace Application.Dto.Cosmos
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<CosmosBox, CosmosBoxDto>();
+            profile.CreateMap<UpdateCosmosBoxDto, CosmosBox>();
         }
-
     }
 }

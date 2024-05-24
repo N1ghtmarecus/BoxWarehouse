@@ -27,16 +27,16 @@ namespace WebAPI.Controllers.V2
             return Ok(
                 new
                 {
-                    Posts = boxes,
-                    Count = boxes.Count()
+                    Posts = sortedBoxes,
+                    Count = sortedBoxes.Count()
                 });
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
-        [HttpGet("{cutterId}")]
-        public async Task<IActionResult> Get(string cutterId)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
         {
-            var box = await _boxService.GetBoxByCutterIdAsync(cutterId);
+            var box = await _boxService.GetBoxByIdAsync(id);
             if (box == null)
             {
                 return NotFound();
@@ -47,7 +47,7 @@ namespace WebAPI.Controllers.V2
 
         [SwaggerOperation(Summary = "Creates a new box")]
         [HttpPost]
-        public async Task<IActionResult> Create(CosmosBoxDto newBox)
+        public async Task<IActionResult> Create(CreateCosmosBoxDto newBox)
         {
             var box = await _boxService.AddNewBoxAsync(newBox);
             return Created($"api/boxes/{box.CutterID}", box);
@@ -55,17 +55,17 @@ namespace WebAPI.Controllers.V2
 
         [SwaggerOperation(Summary = "Updates an existing box")]
         [HttpPut]
-        public async Task<IActionResult> Update(CosmosBoxDto updateBox)
+        public async Task<IActionResult> Update(UpdateCosmosBoxDto updateBox)
         {
             await _boxService.UpdateBoxAsync(updateBox);
             return NoContent();
         }
 
         [SwaggerOperation(Summary = "Deletes a box by unique cutter ID")]
-        [HttpDelete("{cutterId}")]
-        public async Task<IActionResult> Delete(string cutterId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
-            await _boxService.DeleteBoxAsync(cutterId);
+            await _boxService.DeleteBoxAsync(id);
             return NoContent();
         }
     }

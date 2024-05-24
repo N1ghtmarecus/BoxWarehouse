@@ -23,13 +23,13 @@ namespace Application.Services
             return _mapper.Map<IEnumerable<CosmosBoxDto>>(boxes);
         }
 
-        public async Task<CosmosBoxDto> GetBoxByCutterIdAsync(string id)
+        public async Task<CosmosBoxDto> GetBoxByIdAsync(string id)
         {
-            var box = await _boxRepository.GetByCutterIdAsync(id);
+            var box = await _boxRepository.GetByIdAsync(id);
             return _mapper.Map<CosmosBoxDto>(box);
         }
 
-        public async Task<CosmosBoxDto> AddNewBoxAsync(CosmosBoxDto newBox)
+        public async Task<CosmosBoxDto> AddNewBoxAsync(CreateCosmosBoxDto newBox)
         {
             if (newBox?.CutterID == null)
             {
@@ -41,16 +41,16 @@ namespace Application.Services
             return _mapper.Map<CosmosBoxDto>(result);
         }
 
-        public async Task UpdateBoxAsync(CosmosBoxDto updateBox)
+        public async Task UpdateBoxAsync(UpdateCosmosBoxDto updateBox)
         {
-            var existingBox = await _boxRepository.GetByCutterIdAsync(updateBox.CutterID!);
+            var existingBox = await _boxRepository.GetByIdAsync(updateBox.ID!);
             var box = _mapper.Map(updateBox, existingBox);
             await _boxRepository.UpdateAsync(box!);
         }
 
         public async Task DeleteBoxAsync(string id)
         {
-            var box = await _boxRepository.GetByCutterIdAsync(id);
+            var box = await _boxRepository.GetByIdAsync(id);
             await _boxRepository.DeleteAsync(box!);
         }
     }
