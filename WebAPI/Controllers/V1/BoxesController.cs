@@ -2,10 +2,11 @@
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using WebAPI.Filters;
+using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [ApiController]
@@ -20,11 +21,15 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Retrieves all boxes")]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter)
         {
-            var boxes = await _boxService.GetAllBoxesAsync();
+            var validPaginationFilter = new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize);
+
+            var boxes = await _boxService.GetAllBoxesAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize);
+            var totalRecords = boxes.Count();
+
             var sortedBoxes = boxes.OrderBy(x => x.CutterID);
-            return Ok(sortedBoxes);
+            return Ok(new PageResponse<IEnumerable<BoxDto>>(sortedBoxes, validPaginationFilter.PageNumber, validPaginationFilter.PageSize, totalRecords));
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
@@ -37,7 +42,7 @@ namespace WebAPI.Controllers.V1
                 return NotFound();
             }
 
-            return Ok(box);
+            return Ok(new Response<BoxDto>(box));
         }
 
         [SwaggerOperation(Summary = "Creates a new box")]
@@ -45,7 +50,7 @@ namespace WebAPI.Controllers.V1
         public async Task<IActionResult> Create(BoxDto newBox)
         {
             var box = await _boxService.AddNewBoxAsync(newBox);
-            return Created($"api/boxes/{box.CutterID}", box);
+            return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box));
         }
 
         [SwaggerOperation(Summary = "Updates an existing box")]

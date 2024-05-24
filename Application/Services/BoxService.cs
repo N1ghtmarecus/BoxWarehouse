@@ -17,9 +17,9 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync()
+        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize)
         {
-            var boxes = await _boxRepository.GetAllAsync();
+            var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
 

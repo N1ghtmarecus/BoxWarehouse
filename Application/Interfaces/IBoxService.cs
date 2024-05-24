@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IBoxService
     {
-        Task<IEnumerable<BoxDto>> GetAllBoxesAsync();
+        Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize);
         Task<BoxDto> GetBoxByCutterIdAsync(int id);
         Task<BoxDto> AddNewBoxAsync(BoxDto newBox);
         Task UpdateBoxAsync(BoxDto updateBox);

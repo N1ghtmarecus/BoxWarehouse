@@ -14,9 +14,9 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Box>> GetAllAsync()
+        public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Boxes.ToListAsync();
+            return await _context.Boxes.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<Box?> GetByCutterIdAsync(int id)
