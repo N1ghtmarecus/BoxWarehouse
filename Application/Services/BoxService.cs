@@ -23,6 +23,11 @@ namespace Application.Services
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
 
+        public async Task<int> GetAllBoxesCountAsync()
+        {
+            return await _boxRepository.GetAllCountAsync();
+        }
+
         public async Task<BoxDto> GetBoxByCutterIdAsync(int id)
         {
             var box = await _boxRepository.GetByCutterIdAsync(id);

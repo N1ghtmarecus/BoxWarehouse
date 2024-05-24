@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using WebAPI.Filters;
+using WebAPI.Helpers;
 using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
@@ -26,10 +27,9 @@ namespace WebAPI.Controllers.V1
             var validPaginationFilter = new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize);
 
             var boxes = await _boxService.GetAllBoxesAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize);
-            var totalRecords = boxes.Count();
+            var totalRecords = await _boxService.GetAllBoxesCountAsync();
 
-            var sortedBoxes = boxes.OrderBy(x => x.CutterID);
-            return Ok(new PageResponse<IEnumerable<BoxDto>>(sortedBoxes, validPaginationFilter.PageNumber, validPaginationFilter.PageSize, totalRecords));
+            return Ok(PaginationHelper.CreatePagedReponse(boxes, validPaginationFilter, totalRecords));
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
