@@ -11,10 +11,12 @@ namespace Application.Dto
         public int Length { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public DateTime CreationDate { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Box, BoxDto>();
+            profile.CreateMap<Box, BoxDto>()
+                .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(src => src.Created));
             profile.CreateMap<BoxDto, Box>();
         }
     }
