@@ -20,13 +20,22 @@ namespace WebAPI.Controllers.V1
             _boxService = boxService;
         }
 
+        [SwaggerOperation(Summary = "Retrieves sort fields")]
+        [HttpGet("[action]")]
+        public IActionResult GetSortFields()
+        {
+            return Ok(SortingHelper.GetSortField().Select(x => x.Key));
+        }
+
         [SwaggerOperation(Summary = "Retrieves all boxes")]
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter)
+        public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter)
         {
             var validPaginationFilter = new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize);
+            var validSortingFilter = new SortingFilter(sortingFilter.SortField, sortingFilter.Ascending);
 
-            var boxes = await _boxService.GetAllBoxesAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize);
+            var boxes = await _boxService.GetAllBoxesAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize,
+                                                           validSortingFilter.SortField!, validSortingFilter.Ascending);
             var totalRecords = await _boxService.GetAllBoxesCountAsync();
 
             return Ok(PaginationHelper.CreatePagedReponse(boxes, validPaginationFilter, totalRecords));
@@ -47,7 +56,7 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Creates a new box")]
         [HttpPost]
-        public async Task<IActionResult> Create(BoxDto newBox)
+        public async Task<IActionResult> Create(CreateBoxDto newBox)
         {
             var box = await _boxService.AddNewBoxAsync(newBox);
             return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box));

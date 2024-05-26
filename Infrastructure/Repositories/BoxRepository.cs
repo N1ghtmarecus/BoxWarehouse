@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -14,9 +15,9 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending)
         {
-            return await _context.Boxes.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await _context.Boxes.OrderByPropertyName(sortField, ascending).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<int> GetAllCountAsync()

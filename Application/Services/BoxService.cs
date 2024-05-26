@@ -17,9 +17,9 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending)
         {
-            var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize);
+            var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
 
@@ -34,7 +34,7 @@ namespace Application.Services
             return _mapper.Map<BoxDto>(box);
         }
 
-        public async Task<BoxDto> AddNewBoxAsync(BoxDto newBox)
+        public async Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox)
         {
             if (newBox?.CutterID == null)
             {
