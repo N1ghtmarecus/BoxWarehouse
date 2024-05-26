@@ -15,14 +15,21 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending)
+        public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterBy)
         {
-            return await _context.Boxes.OrderByPropertyName(sortField, ascending).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await _context.Boxes
+                .Where(m => m.CutterID.ToString() == filterBy.ToLower())
+                .OrderByPropertyName(sortField, ascending)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
-        public async Task<int> GetAllCountAsync()
+        public async Task<int> GetAllCountAsync(string filterBy)
         {
-            return await _context.Boxes.CountAsync();
+            return await _context.Boxes
+                .Where(m => m.CutterID.ToString() == filterBy.ToLower())
+                .CountAsync();
         }
 
         public async Task<Box?> GetByCutterIdAsync(int id)
