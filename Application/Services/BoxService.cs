@@ -17,15 +17,15 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterBy)
+        public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId)
         {
-            var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending, filterBy);
+            var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending, filterCutterId);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
 
-        public async Task<int> GetAllBoxesCountAsync(string filterBy)
+        public async Task<int> GetAllBoxesCountAsync(string filterCutterId)
         {
-            return await _boxRepository.GetAllCountAsync(filterBy);
+            return await _boxRepository.GetAllCountAsync(filterCutterId);
         }
 
         public async Task<BoxDto> GetBoxByCutterIdAsync(int id)

@@ -29,16 +29,16 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Retrieves all boxes")]
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter, [FromQuery] string filterBy = "")
+        public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter, [FromQuery] string filterCutterId = "")
         {
             var validPaginationFilter = new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize);
             var validSortingFilter = new SortingFilter(sortingFilter.SortField, sortingFilter.Ascending);
 
             var boxes = await _boxService.GetAllBoxesAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize,
                                                            validSortingFilter.SortField!, validSortingFilter.Ascending,
-                                                           filterBy);
+                                                           filterCutterId);
 
-            var totalRecords = await _boxService.GetAllBoxesCountAsync(filterBy);
+            var totalRecords = await _boxService.GetAllBoxesCountAsync(filterCutterId);
 
             return Ok(PaginationHelper.CreatePagedReponse(boxes, validPaginationFilter, totalRecords));
         }
