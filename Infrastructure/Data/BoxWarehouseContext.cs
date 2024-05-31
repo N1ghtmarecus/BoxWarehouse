@@ -1,13 +1,15 @@
 ﻿using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.Data
 {
-    public class BoxWarehouseContext : DbContext
+    public class BoxWarehouseContext : IdentityDbContext<ApplicationUser>
     {
-        public BoxWarehouseContext(DbContextOptions options) : base(options)
+        public BoxWarehouseContext(DbContextOptions<BoxWarehouseContext> options) : base(options)
         {
         }
 
