@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using WebAPI.Filters;
@@ -10,6 +11,7 @@ namespace WebAPI.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
+    [Authorize]
     [ApiController]
     public class BoxesController : ControllerBase
     {

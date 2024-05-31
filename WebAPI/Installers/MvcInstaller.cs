@@ -21,6 +21,8 @@ namespace WebAPI.Installers
                 options.ReportApiVersions = true;
                 options.ApiVersionReader = new HeaderApiVersionReader("api-version");
             });
+
+            services.AddAuthorization();
         }
     }
 }
