@@ -12,7 +12,11 @@ namespace WebAPI.Installers
             services.AddApplication();
             services.AddInfrastructure();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.WriteIndented = true;
+                });
 
             services.AddApiVersioning(options =>
             {

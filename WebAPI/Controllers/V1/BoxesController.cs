@@ -29,7 +29,8 @@ namespace WebAPI.Controllers.V1
             return Ok(SortingHelper.GetSortField().Select(x => x.Key));
         }
 
-        [SwaggerOperation(Summary = "Retrieves all boxes")]
+        [SwaggerOperation(Summary = "Retrieves paged boxes")]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter, [FromQuery] string filterCutterId = "")
         {
@@ -43,6 +44,13 @@ namespace WebAPI.Controllers.V1
             var totalRecords = await _boxService.GetAllBoxesCountAsync(filterCutterId);
 
             return Ok(PaginationHelper.CreatePagedReponse(boxes, validPaginationFilter, totalRecords));
+        }
+
+        [SwaggerOperation(Summary = "Retrieves all boxes")]
+        [HttpGet("[action]")]
+        public IQueryable<BoxDto> GetAll()
+        {
+            return _boxService.GetAllBoxes();
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]

@@ -15,6 +15,11 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        public IQueryable<Box> GetAll()
+        {
+            return _context.Boxes.AsQueryable();
+        }
+
         public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId)
         {
             return await _context.Boxes

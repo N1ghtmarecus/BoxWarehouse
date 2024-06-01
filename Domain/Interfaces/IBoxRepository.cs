@@ -4,6 +4,7 @@ namespace Domain.Interfaces
 {
     public interface IBoxRepository
     {
+        IQueryable<Box> GetAll();
         Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId);
         Task<int> GetAllCountAsync(string filterCutterId);
         Task<Box?> GetByCutterIdAsync(int id);

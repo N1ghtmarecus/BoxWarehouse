@@ -17,6 +17,12 @@ namespace Application.Services
             _mapper = mapper;
         }
 
+        public IQueryable<BoxDto> GetAllBoxes()
+        {
+            var boxes = _boxRepository.GetAll();
+            return _mapper.ProjectTo<BoxDto>(boxes);
+        }
+
         public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId)
         {
             var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending, filterCutterId);
