@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -24,6 +25,7 @@ namespace WebAPI.Controllers.V1
         }
 
         [SwaggerOperation(Summary = "Retrieves sort fields")]
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public IActionResult GetSortFields()
         {
@@ -31,7 +33,7 @@ namespace WebAPI.Controllers.V1
         }
 
         [SwaggerOperation(Summary = "Retrieves paged boxes")]
-        [AllowAnonymous]
+        [Authorize(Roles = UserRoles.AdminOrManagerOrUser)]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter, [FromQuery] string filterCutterId = "")
         {
@@ -48,66 +50,62 @@ namespace WebAPI.Controllers.V1
         }
 
         [SwaggerOperation(Summary = "Retrieves all boxes")]
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public IQueryable<BoxDto> GetAll()
         {
             return _boxService.GetAllBoxes();
         }
 
-        [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
-        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Retrieves a specific box by cutter ID")]
+        [Authorize(Roles = UserRoles.AdminOrManagerOrUser)]
         [HttpGet("{cutterId}")]
         public async Task<IActionResult> Get(int cutterId)
         {
             var box = await _boxService.GetBoxByCutterIdAsync(cutterId);
             if (box == null)
             {
-                return NotFound();
+                return NotFound(new Response<bool>()
+                {
+                    Succeeded = false,
+                    Message = $"Box with cutter ID {cutterId} not found"
+                });
             }
 
-            return Ok(new Response<BoxDto>(box));
+            return Ok(new Response<BoxDto>(box)
+            {
+                Succeeded = true,
+                Message = $"Box with cutter ID {cutterId} found"
+            });
         }
 
         [SwaggerOperation(Summary = "Creates a new box")]
+        [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpPost]
         public async Task<IActionResult> Create(CreateBoxDto newBox)
         {
             var box = await _boxService.AddNewBoxAsync(newBox, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box));
+            return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box)
+            {
+                Succeeded = true,
+                Message = $"New box with cutter ID {box.CutterID} created successfully"
+            });
         }
 
         [SwaggerOperation(Summary = "Updates an existing box")]
+        [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpPut]
         public async Task<IActionResult> Update(BoxDto updateBox)
         {
-            var userOwnsBox = await _boxService.UserOwnsBoxAsync(updateBox.CutterID, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            if (!userOwnsBox)
-            {
-                return BadRequest(new Response<bool>()
-                {
-                    Succeeded = false,
-                    Message = "You do not own this box"
-                });
-            }
-
             await _boxService.UpdateBoxAsync(updateBox);
             return NoContent();
         }
 
         [SwaggerOperation(Summary = "Deletes a box by unique cutter ID")]
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{cutterId}")]
         public async Task<IActionResult> Delete(int cutterId)
         {
-            var userOwnsBox = await _boxService.UserOwnsBoxAsync(cutterId, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            if (!userOwnsBox)
-            {
-                return BadRequest(new Response<bool>()
-                {
-                    Succeeded = false,
-                    Message = "You do not own this box"
-                });
-            }
-
             await _boxService.DeleteBoxAsync(cutterId);
             return NoContent();
         }
