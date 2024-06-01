@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Services;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -27,6 +28,8 @@ namespace WebAPI.Installers
             });
 
             services.AddAuthorization();
+
+            services.AddTransient<UserResolverService>();
         }
     }
 }

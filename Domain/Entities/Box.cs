@@ -30,6 +30,10 @@ namespace Domain.Entities
         [MaxLength(4)]
         public int Height { get; set; }
 
+        [Required]
+        [MaxLength(450)]
+        public string? UserId { get; set; }
+
         public Box() { }
 
         public Box(int cutterID, int fefco, int length, int width, int height)

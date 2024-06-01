@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 using WebAPI.Filters;
 using WebAPI.Helpers;
 using WebAPI.Wrappers;
@@ -54,6 +55,7 @@ namespace WebAPI.Controllers.V1
         }
 
         [SwaggerOperation(Summary = "Retrieves a specific box by unique cutter ID")]
+        [AllowAnonymous]
         [HttpGet("{cutterId}")]
         public async Task<IActionResult> Get(int cutterId)
         {
@@ -70,7 +72,7 @@ namespace WebAPI.Controllers.V1
         [HttpPost]
         public async Task<IActionResult> Create(CreateBoxDto newBox)
         {
-            var box = await _boxService.AddNewBoxAsync(newBox);
+            var box = await _boxService.AddNewBoxAsync(newBox, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box));
         }
 
@@ -78,6 +80,16 @@ namespace WebAPI.Controllers.V1
         [HttpPut]
         public async Task<IActionResult> Update(BoxDto updateBox)
         {
+            var userOwnsBox = await _boxService.UserOwnsBoxAsync(updateBox.CutterID, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            if (!userOwnsBox)
+            {
+                return BadRequest(new Response<bool>()
+                {
+                    Succeeded = false,
+                    Message = "You do not own this box"
+                });
+            }
+
             await _boxService.UpdateBoxAsync(updateBox);
             return NoContent();
         }
@@ -86,6 +98,16 @@ namespace WebAPI.Controllers.V1
         [HttpDelete("{cutterId}")]
         public async Task<IActionResult> Delete(int cutterId)
         {
+            var userOwnsBox = await _boxService.UserOwnsBoxAsync(cutterId, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            if (!userOwnsBox)
+            {
+                return BadRequest(new Response<bool>()
+                {
+                    Succeeded = false,
+                    Message = "You do not own this box"
+                });
+            }
+
             await _boxService.DeleteBoxAsync(cutterId);
             return NoContent();
         }

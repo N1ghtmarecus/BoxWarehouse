@@ -1,4 +1,5 @@
-﻿using Domain.Common;
+﻿using Application.Services;
+using Domain.Common;
 using Domain.Entities;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,8 +10,10 @@ namespace Infrastructure.Data
 {
     public class BoxWarehouseContext : IdentityDbContext<ApplicationUser>
     {
-        public BoxWarehouseContext(DbContextOptions<BoxWarehouseContext> options) : base(options)
+        private readonly UserResolverService _userService;
+        public BoxWarehouseContext(DbContextOptions<BoxWarehouseContext> options, UserResolverService userService) : base(options)
         {
+            _userService = userService;
         }
 
         public DbSet<Box> Boxes { get; set; }
@@ -24,10 +27,12 @@ namespace Infrastructure.Data
             foreach (var entityEntry in entries)
             {
                 ((AuditableEntity)entityEntry.Entity).LastModified = DateTime.Now;
+                ((AuditableEntity)entityEntry.Entity).LastModifiedBy = _userService.GetUser();
 
                 if (entityEntry.State == EntityState.Added)
                 {
                     ((AuditableEntity)entityEntry.Entity).Created = DateTime.Now;
+                    ((AuditableEntity)entityEntry.Entity).CreatedBy = _userService.GetUser();
                 }
             }
 

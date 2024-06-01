@@ -40,7 +40,7 @@ namespace Application.Services
             return _mapper.Map<BoxDto>(box);
         }
 
-        public async Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox)
+        public async Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox, string userId)
         {
             if (newBox?.CutterID == null)
             {
@@ -48,6 +48,7 @@ namespace Application.Services
             }
 
             var box = _mapper.Map<Box>(newBox);
+            box.UserId = userId;
             var result = await _boxRepository.AddAsync(box);
             return _mapper.Map<BoxDto>(result);
         }
@@ -63,6 +64,22 @@ namespace Application.Services
         {
             var box = await _boxRepository.GetByCutterIdAsync(id);
             await _boxRepository.DeleteAsync(box!);
+        }
+
+        public async Task<bool> UserOwnsBoxAsync(int boxId, string userId)
+        {
+            var box = await _boxRepository.GetByCutterIdAsync(boxId);
+            if (box == null)
+            {
+                return false;
+            }
+
+            if (box.UserId != userId)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
