@@ -1,4 +1,6 @@
-﻿using Infrastructure.Identity;
+﻿using Application.Interfaces;
+using Domain.Enums;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,13 +20,14 @@ namespace WebAPI.Controllers.V1
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSenderService _emailSenderService;
 
-        public IdentityController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public IdentityController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IEmailSenderService emailSenderService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
-
+            _emailSenderService = emailSenderService;
         }
 
         [HttpPost]
@@ -62,6 +65,8 @@ namespace WebAPI.Controllers.V1
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
             await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+            await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
             return Ok(new Response<bool>
             {
@@ -106,6 +111,8 @@ namespace WebAPI.Controllers.V1
 
             await _userManager.AddToRoleAsync(user, UserRoles.Manager);
 
+            await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
+
             return Ok(new Response<bool>
             {
                 Succeeded = true,
@@ -148,6 +155,8 @@ namespace WebAPI.Controllers.V1
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
 
             await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+
+            await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
             return Ok(new Response<bool>
             {
@@ -195,7 +204,6 @@ namespace WebAPI.Controllers.V1
                 Succeeded = false,
                 Message = "Invalid credentials"
             });
-
         }
 
         [HttpDelete]
@@ -230,7 +238,5 @@ namespace WebAPI.Controllers.V1
                 Message = "User deleted successfully"
             });
         }
-
-
     }
 }
