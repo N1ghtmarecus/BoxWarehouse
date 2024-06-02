@@ -79,6 +79,36 @@ namespace WebAPI.Controllers.V1
             });
         }
 
+        [SwaggerOperation(Summary = "Searches boxes by length")]
+        [AllowAnonymous]
+        [HttpGet("searchBy/{length}")]
+        public async Task<IActionResult> SearchByLength(int length)
+        {
+            var boxes = await _boxService.GetBoxesByLengthAsync(length);
+            if (boxes != null && boxes.Any())
+            {
+                return Ok(new Response<IEnumerable<BoxDto>>(boxes)
+                {
+                    Succeeded = true,
+                    Message = $"Found boxes with exact length {length}"
+                });
+            }
+
+            var lowerBound = length - 20;
+            var upperBound = length + 20;
+            boxes = await _boxService.GetBoxesByLengthRangeAsync(lowerBound, upperBound);
+            if (boxes != null && boxes.Any())
+            {
+                return Ok(new Response<IEnumerable<BoxDto>>(boxes)
+                {
+                    Succeeded = true,
+                    Message = $"No boxes found with exact length {length}. Found boxes within the range {lowerBound}-{upperBound}"
+                });
+            }
+
+            return NotFound(new Response<string> { Succeeded = false, Message = $"No boxes found with length {length} or within the range {lowerBound}-{upperBound}" });
+        }
+
         [SwaggerOperation(Summary = "Creates a new box")]
         [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpPost]

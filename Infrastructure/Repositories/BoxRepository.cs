@@ -42,6 +42,16 @@ namespace Infrastructure.Repositories
             return await _context.Boxes.SingleOrDefaultAsync(x => x.CutterID == id);
         }
 
+        public async Task<IEnumerable<Box>> GetByLengthAsync(int length)
+        {
+            return await _context.Boxes.Where(x => x.Length == length).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Box>> GetByLengthRangeAsync(int lowerBound, int upperBound)
+        {
+            return await _context.Boxes.Where(x => x.Length >= lowerBound && x.Length <= upperBound).ToListAsync();
+        }
+
         public async Task<Box> AddAsync(Box box)
         {
             var createdBox = await _context.Boxes.AddAsync(box);

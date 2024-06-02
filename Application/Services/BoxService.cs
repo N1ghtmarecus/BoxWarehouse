@@ -40,6 +40,18 @@ namespace Application.Services
             return _mapper.Map<BoxDto>(box);
         }
 
+        public async Task<IEnumerable<BoxDto>> GetBoxesByLengthAsync(int length)
+        {
+            var boxes = await _boxRepository.GetByLengthAsync(length);
+            return _mapper.Map<IEnumerable<BoxDto>>(boxes);
+        }
+
+        public async Task<IEnumerable<BoxDto>> GetBoxesByLengthRangeAsync(int lowerBound, int upperBound)
+        {
+            var boxes = await _boxRepository.GetByLengthRangeAsync(lowerBound, upperBound);
+            return _mapper.Map<IEnumerable<BoxDto>>(boxes);
+        }
+
         public async Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox, string userId)
         {
             if (newBox?.CutterID == null)
