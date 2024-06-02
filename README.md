@@ -5,3 +5,4 @@ Used NuGet packages:
 - AutoMapper
 - AzureCosmos
 - Swashbuckle
+- FluentEmail
