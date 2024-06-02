@@ -90,7 +90,7 @@ namespace WebAPI.Controllers.V1
                 return Ok(new Response<IEnumerable<BoxDto>>(boxes)
                 {
                     Succeeded = true,
-                    Message = $"Found boxes with exact length {length}"
+                    Message = $"Found {boxes.Count()} boxes with exact length {length}mm"
                 });
             }
 
@@ -102,11 +102,11 @@ namespace WebAPI.Controllers.V1
                 return Ok(new Response<IEnumerable<BoxDto>>(boxes)
                 {
                     Succeeded = true,
-                    Message = $"No boxes found with exact length {length}. Found boxes within the range {lowerBound}-{upperBound}"
+                    Message = $"No boxes found with exact length {length}mm. Found {boxes.Count()} boxes within the range {lowerBound}-{upperBound}mm"
                 });
             }
 
-            return NotFound(new Response<string> { Succeeded = false, Message = $"No boxes found with length {length} or within the range {lowerBound}-{upperBound}" });
+            return NotFound(new Response<string> { Succeeded = false, Message = $"No boxes found with length {length}mm or within the range {lowerBound}-{upperBound}mm" });
         }
 
         [SwaggerOperation(Summary = "Creates a new box")]
