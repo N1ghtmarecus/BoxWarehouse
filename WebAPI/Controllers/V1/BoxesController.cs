@@ -65,11 +65,7 @@ namespace WebAPI.Controllers.V1
             var box = await _boxService.GetBoxByCutterIdAsync(cutterId);
             if (box == null)
             {
-                return NotFound(new Response<bool>()
-                {
-                    Succeeded = false,
-                    Message = $"Box with cutter ID {cutterId} not found"
-                });
+                return NotFound(new Response(false, $"Box with cutter ID {cutterId} not found."));
             }
 
             return Ok(new Response<BoxDto>(box)
@@ -106,7 +102,7 @@ namespace WebAPI.Controllers.V1
                 });
             }
 
-            return NotFound(new Response<string> { Succeeded = false, Message = $"No boxes found with length {length}mm or within the range {lowerBound}-{upperBound}mm" });
+            return NotFound(new Response(false, $"No boxes found with length {length}mm or within the range {lowerBound}-{upperBound}mm"));
         }
 
         [SwaggerOperation(Summary = "Creates a new box")]

@@ -1,4 +1,5 @@
 using WebAPI.Installers;
+using WebAPI.Middlewares;
 
 namespace WebAPI;
 
@@ -21,7 +22,10 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseMiddleware<ErrorHandlerMiddleware>();
         app.UseHttpsRedirection();
+
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
 
