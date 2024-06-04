@@ -37,11 +37,7 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = "User already exists!"
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User already exists!"));
             }
 
             ApplicationUser user = new ApplicationUser()
@@ -53,12 +49,7 @@ namespace WebAPI.Controllers.V1
             var result = await _userManager.CreateAsync(user, register.Password!);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = "User creation failed! Please check user details and try again.",
-                    Errors = result.Errors.Select(e => e.Description)
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User creation failed! Please check user details and try again.", result.Errors.Select(e => e.Description)));
             }
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.User))
@@ -68,11 +59,7 @@ namespace WebAPI.Controllers.V1
 
             await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
-            return Ok(new Response<bool>
-            {
-                Succeeded = true,
-                Message = "User created successfully!"
-            });
+            return Ok(new Response(true, "User created successfully!"));
         }
 
         [HttpPost]
@@ -82,14 +69,10 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = $"User with username {register.Username} already exists!"
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, $"User with username {register.Username} already exists!"));
             }
 
-            ApplicationUser user = new ApplicationUser()
+            ApplicationUser user = new()
             {
                 Email = register.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -98,12 +81,7 @@ namespace WebAPI.Controllers.V1
             var result = await _userManager.CreateAsync(user, register.Password!);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = "Manager creation failed! Please check manager details and try again.",
-                    Errors = result.Errors.Select(e => e.Description)
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "Manager creation failed! Please check manager details and try again.", result.Errors.Select(e => e.Description)));
             }
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Manager))
@@ -113,11 +91,7 @@ namespace WebAPI.Controllers.V1
 
             await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
-            return Ok(new Response<bool>
-            {
-                Succeeded = true,
-                Message = "Manager created successfully!"
-            });
+            return Ok(new Response(true, "Manager created successfully!"));
         }
 
         [HttpPost]
@@ -127,11 +101,7 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = $"User with username {register.Username} already exists!"
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, $"User with username {register.Username} already exists!"));
             }
 
             ApplicationUser user = new ApplicationUser()
@@ -143,12 +113,7 @@ namespace WebAPI.Controllers.V1
             var result = await _userManager.CreateAsync(user, register.Password!);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = "Admin creation failed! Please check admin details and try again.",
-                    Errors = result.Errors.Select(e => e.Description)
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "Admin creation failed! Please check admin details and try again.", result.Errors.Select(e => e.Description)));
             }
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
@@ -158,11 +123,7 @@ namespace WebAPI.Controllers.V1
 
             await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
-            return Ok(new Response<bool>
-            {
-                Succeeded = true,
-                Message = "Admin created successfully!"
-            });
+            return Ok(new Response(true, "Admin created successfully!"));
         }
 
         [HttpPost]
@@ -199,11 +160,7 @@ namespace WebAPI.Controllers.V1
                     expiration = token.ValidTo
                 });
             }
-            return Unauthorized(new Response<bool>
-            {
-                Succeeded = false,
-                Message = "Invalid credentials"
-            });
+            return Unauthorized(new Response(false, "Invalid credentials"));
         }
 
         [HttpDelete]
@@ -214,29 +171,16 @@ namespace WebAPI.Controllers.V1
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound(new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = "User not found"
-                });
+                return NotFound(new Response(false, "User not found"));
             }
 
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
-                {
-                    Succeeded = false,
-                    Message = "User deletion failed",
-                    Errors = result.Errors.Select(e => e.Description)
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User deletion failed", result.Errors.Select(e => e.Description)));
             }
 
-            return Ok(new Response<bool>
-            {
-                Succeeded = true,
-                Message = "User deleted successfully"
-            });
+            return Ok(new Response(true, "User deleted successfully"));
         }
     }
 }

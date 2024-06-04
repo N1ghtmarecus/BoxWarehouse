@@ -3,9 +3,6 @@
     public class Response<T> : Response
     {
         public T? Data { get; set; }
-        public new bool Succeeded { get; set; }
-        public new string? Message { get; set; }
-        public IEnumerable<string>? Errors { get; set; }
 
         public Response()
         {
@@ -22,15 +19,17 @@
     {
         public bool Succeeded { get; set; }
         public string? Message { get; set; }
+        public IEnumerable<string>? Errors { get; set; }
 
         public Response()
         {
         }
 
-        public Response(bool succeeded, string message)
+        public Response(bool succeeded, string message, IEnumerable<string>? errors = null)
         {
             Succeeded = succeeded;
             Message = message;
+            Errors = errors;
         }
     }
 }
