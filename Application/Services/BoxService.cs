@@ -59,6 +59,12 @@ namespace Application.Services
                 throw new Exception("Cutter ID is required");
             }
 
+            var existingBox = await _boxRepository.GetByCutterIdAsync(newBox.CutterID);
+            if (existingBox != null)
+            {
+                throw new Exception($"Box with Cutter ID {newBox.CutterID} already exists");
+            }
+
             var box = _mapper.Map<Box>(newBox);
             box.UserId = userId;
             var result = await _boxRepository.AddAsync(box);
