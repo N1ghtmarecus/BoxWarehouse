@@ -17,6 +17,7 @@ namespace Infrastructure.Data
         }
 
         public DbSet<Box> Boxes { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
 
         public async Task<int> SaveChangesAsync()
         {
