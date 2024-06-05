@@ -10,6 +10,7 @@ namespace Infrastructure
         {
             services.AddScoped<IBoxRepository, BoxRepository>();
             services.AddScoped<ICosmosBoxRepository, CosmosBoxRepository>();
+            services.AddScoped<IPictureRepository, PictureRepository>();
 
             return services;
         }
