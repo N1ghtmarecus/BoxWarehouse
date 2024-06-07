@@ -39,6 +39,16 @@ namespace Application.Services
         {
             var box = await _boxRepository.GetByCutterIdAsync(boxCutterId);
 
+            if (isMain)
+            {
+                var mainPicture = await _pictureRepository.GetMainPictureForBoxAsync(boxCutterId);
+                if (mainPicture != null)
+                {
+                    mainPicture.IsMain = false;
+                    await _pictureRepository.UpdateAsync(mainPicture);
+                }
+            }
+
             var picture = new Picture()
             {
                 Boxes = new List<Box> { box! },
