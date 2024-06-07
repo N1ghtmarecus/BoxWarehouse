@@ -21,20 +21,40 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PictureDto> AddPictureToBoxAsync(int boxCutterId, IFormFile file)
+        public async Task<IEnumerable<PictureDto>> GetPicturesByBoxCutterIdAsync(int boxCutterId)
+        {
+            var box = await _boxRepository.GetByCutterIdAsync(boxCutterId) ?? throw new ArgumentException($"Box with Cutter Id '{boxCutterId}' does not exist.");
+
+            var pictures = await _pictureRepository.GetByBoxCutterIdAsync(boxCutterId);
+            return _mapper.Map<IEnumerable<PictureDto>>(pictures);
+        }
+
+        public async Task<PictureDto> GetPictureByIdAsync(int id)
+        {
+            var picture = await _pictureRepository.GetByIdAsync(id);
+            return _mapper.Map<PictureDto>(picture);
+        }
+
+        public async Task<PictureDto> AddPictureToBoxAsync(int boxCutterId, IFormFile file, bool isMain)
         {
             var box = await _boxRepository.GetByCutterIdAsync(boxCutterId);
 
             var picture = new Picture()
             {
                 Boxes = new List<Box> { box! },
-                Name = file.Name,
+                Name = file.FileName,
                 Image = file.GetBytes(),
-                IsMain = true
+                IsMain = isMain
             };
 
             var result = await _pictureRepository.AddAsync(picture);
             return _mapper.Map<PictureDto>(result);
+        }
+
+        public async Task DeletePictureAsync(int id)
+        {
+            var picture = await _pictureRepository.GetByIdAsync(id);
+            await _pictureRepository.DeleteAsync(picture!);
         }
     }
 }

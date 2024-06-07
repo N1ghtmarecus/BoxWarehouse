@@ -6,11 +6,9 @@ namespace Application.ExtensionMethods
     {
         public static byte[] GetBytes(this IFormFile formFile)
         {
-            using (var memoryStream = new MemoryStream())
-            {
-                formFile.CopyTo(memoryStream);
-                return memoryStream.ToArray();
-            }
+            using var memoryStream = new MemoryStream();
+            formFile.CopyTo(memoryStream);
+            return memoryStream.ToArray();
         }
     }
 }
