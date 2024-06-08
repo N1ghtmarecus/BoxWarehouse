@@ -13,6 +13,5 @@ namespace Application.Interfaces
         Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox, string userId);
         Task UpdateBoxAsync(BoxDto updateBox);
         Task DeleteBoxAsync(int id);
-        Task<bool> UserOwnsBoxAsync(int boxId, string userId);
     }
 }

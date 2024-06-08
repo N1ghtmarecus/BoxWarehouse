@@ -83,21 +83,5 @@ namespace Application.Services
             var box = await _boxRepository.GetByCutterIdAsync(id);
             await _boxRepository.DeleteAsync(box!);
         }
-
-        public async Task<bool> UserOwnsBoxAsync(int boxId, string userId)
-        {
-            var box = await _boxRepository.GetByCutterIdAsync(boxId);
-            if (box == null)
-            {
-                return false;
-            }
-
-            if (box.UserId != userId)
-            {
-                return false;
-            }
-
-            return true;
-        }
     }
 }
