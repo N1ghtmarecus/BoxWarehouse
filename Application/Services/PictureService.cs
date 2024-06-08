@@ -66,5 +66,11 @@ namespace Application.Services
             var picture = await _pictureRepository.GetByIdAsync(id);
             await _pictureRepository.DeleteAsync(picture!);
         }
+
+        public async Task UpdatePictureAsync(PictureDto picture)
+        {
+            var existingPicture = await _pictureRepository.GetByIdAsync(picture.Id);
+            await _pictureRepository.UpdateAsync(_mapper.Map(picture, existingPicture)!);
+        }
     }
 }

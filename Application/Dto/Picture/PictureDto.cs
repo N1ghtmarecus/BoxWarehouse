@@ -1,7 +1,6 @@
 ﻿using Application.Mappings;
 using AutoMapper;
 using Domain.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dto
 {
@@ -13,11 +12,12 @@ namespace Application.Dto
 
         public byte[]? Image { get; set; }
 
-        public bool? IsMain { get; set; }
+        public bool IsMain { get; set; }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Picture, PictureDto>();
+            profile.CreateMap<PictureDto, Picture>();
         }
     }
 }

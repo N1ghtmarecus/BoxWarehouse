@@ -9,5 +9,6 @@ namespace Application.Interfaces
         Task<PictureDto> GetPictureByIdAsync(int id);
         Task<PictureDto> AddPictureToBoxAsync(int boxCutterId, IFormFile file, bool isMain);
         Task DeletePictureAsync(int id);
+        Task UpdatePictureAsync(PictureDto picture);
     }
 }

@@ -17,7 +17,7 @@ namespace Domain.Entities
         public byte[]? Image { get; set; }
 
         [Required]
-        public bool? IsMain { get; set; }
+        public bool IsMain { get; set; }
 
         public ICollection<Box>? Boxes { get; set; }
     }

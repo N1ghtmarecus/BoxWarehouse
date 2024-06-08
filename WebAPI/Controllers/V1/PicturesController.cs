@@ -103,5 +103,25 @@ namespace WebAPI.Controllers.V1
                 Message = $"Picture '{picture.Name}' deleted successfully."
             });
         }
+        [SwaggerOperation(Summary = "Updates the isMain flag of a picture")]
+        [HttpPut("{pictureId}/isMain")]
+        public async Task<IActionResult> UpdateIsMainFlagAsync(int pictureId, bool isMain)
+        {
+            var picture = await _pictureService.GetPictureByIdAsync(pictureId);
+
+            if (picture == null)
+            {
+                return NotFound(new Response(false, $"Picture with ID '{pictureId}' does not exist."));
+            }
+
+            picture.IsMain = isMain;
+            await _pictureService.UpdatePictureAsync(picture);  
+
+            return Ok(new Response<PictureDto>(picture)
+            {
+                Succeeded = true,
+                Message = $"isMain flag of Picture '{picture.Name}' updated successfully."
+            });
+        }
     }
 }
