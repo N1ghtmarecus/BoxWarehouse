@@ -96,14 +96,14 @@ namespace WebAPI.Controllers.V1
             boxes = await _boxService.GetBoxesByLengthRangeAsync(lowerValue, upperValue);
             if (boxes != null && boxes.Any())
             {
-                return Ok(new Response<IEnumerable<BoxDto>>(boxes)
+                return Ok(new Response<IEnumerable<BoxDto>>(boxes.OrderBy(b => b.Length))
                 {
                     Succeeded = true,
-                    Message = $"No boxes found with exact length {length}mm. Found {boxes.Count()} boxes within the range {lowerBound}-{upperBound}mm"
+                    Message = $"No boxes were found with an exact length of {length}mm. Found {boxes.Count()} boxes within the range {lowerValue}-{upperValue}mm"
                 });
             }
 
-            return NotFound(new Response(false, $"No boxes found with length {length}mm or within the range {lowerBound}-{upperBound}mm"));
+            return NotFound(new Response(false, $"No boxes were found with an exact length of {length}mm or within the range {lowerValue}-{upperValue}mm"));
         }
 
         [ValidateFilter]
