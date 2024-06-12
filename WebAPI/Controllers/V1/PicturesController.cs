@@ -61,7 +61,7 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Adds a picture to a box")]
         [HttpPost("{boxCutterId}")]
-        public async Task<IActionResult> AddToBoxAsync(int boxCutterId, IFormFile file, bool isMain)
+        public async Task<IActionResult> AddToBoxAsync(int boxCutterId, IFormFile file, bool isMain = false)
         {
             var box = await _boxService.GetBoxByCutterIdAsync(boxCutterId);
 
@@ -103,7 +103,7 @@ namespace WebAPI.Controllers.V1
                 Message = $"Picture '{picture.Name}' deleted successfully."
             });
         }
-        [SwaggerOperation(Summary = "Updates the isMain flag of a picture")]
+        [SwaggerOperation(Summary = "Updates the main picture of the box")]
         [HttpPut("{pictureId}/isMain")]
         public async Task<IActionResult> UpdateIsMainFlagAsync(int pictureId, bool isMain)
         {
