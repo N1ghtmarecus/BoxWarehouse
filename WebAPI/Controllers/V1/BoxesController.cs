@@ -1,6 +1,5 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
-using Application.Validators;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +79,7 @@ namespace WebAPI.Controllers.V1
         [SwaggerOperation(Summary = "Searches boxes by length")]
         [AllowAnonymous]
         [HttpGet("searchBy/{length}")]
-        public async Task<IActionResult> SearchByLength(int length)
+        public async Task<IActionResult> SearchByLength(int length, int lowerBound, int upperBound)
         {
             var boxes = await _boxService.GetBoxesByLengthAsync(length);
             if (boxes != null && boxes.Any())
@@ -92,9 +91,9 @@ namespace WebAPI.Controllers.V1
                 });
             }
 
-            var lowerBound = length - 20;
-            var upperBound = length + 20;
-            boxes = await _boxService.GetBoxesByLengthRangeAsync(lowerBound, upperBound);
+            var lowerValue = length - lowerBound;
+            var upperValue = length + upperBound;
+            boxes = await _boxService.GetBoxesByLengthRangeAsync(lowerValue, upperValue);
             if (boxes != null && boxes.Any())
             {
                 return Ok(new Response<IEnumerable<BoxDto>>(boxes)
