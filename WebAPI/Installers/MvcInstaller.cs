@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Services;
+using FluentValidation.AspNetCore;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -19,6 +20,8 @@ namespace WebAPI.Installers
                 {
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
+
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
             services.AddApiVersioning(options =>
             {

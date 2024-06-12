@@ -54,12 +54,7 @@ namespace Application.Services
 
         public async Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox, string userId)
         {
-            if (newBox?.CutterID == null)
-            {
-                throw new Exception("Cutter ID is required");
-            }
-
-            var existingBox = await _boxRepository.GetByCutterIdAsync(newBox.CutterID);
+            var existingBox = await _boxRepository.GetByCutterIdAsync(newBox!.CutterID);
             if (existingBox != null)
             {
                 throw new Exception($"Box with Cutter ID {newBox.CutterID} already exists");
