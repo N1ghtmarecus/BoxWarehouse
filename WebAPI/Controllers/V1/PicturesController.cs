@@ -37,7 +37,7 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response<IEnumerable<PictureDto>>(pictures)
             {
                 Succeeded = true,
-                Message = $"Pictures for Box with Cutter Id '{boxCutterId}' retrieved successfully."
+                Message = $"Retrieved {pictures.Count()} pictures for Box with Cutter Id '{boxCutterId}'."
             });
         }
 
@@ -80,7 +80,7 @@ namespace WebAPI.Controllers.V1
             return Created($"api/pictures/{picture.Id}", new Response<PictureDto>(picture)
             {
                 Succeeded = true,
-                Message = $"Picture '{picture.Name}' added to the box successfully."
+                Message = $"Picture '{picture.Name}' added to the box with cutter id {boxCutterId} successfully."
             });
         }
 
