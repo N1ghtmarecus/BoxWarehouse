@@ -42,14 +42,26 @@ namespace Infrastructure.Repositories
             return await _context.Boxes.SingleOrDefaultAsync(x => x.CutterID == id);
         }
 
-        public async Task<IEnumerable<Box>> GetByLengthAsync(int length)
+        public async Task<IEnumerable<Box>> GetByDimensionAsync(string dimension, int dimensionValue)
         {
-            return await _context.Boxes.Where(x => x.Length == length).ToListAsync();
+            return dimension switch
+            {
+                "length" => await _context.Boxes.Where(x => x.Length == dimensionValue).ToListAsync(),
+                "width" => await _context.Boxes.Where(x => x.Width == dimensionValue).ToListAsync(),
+                "height" => await _context.Boxes.Where(x => x.Height == dimensionValue).ToListAsync(),
+                _ => await Task.FromResult(new List<Box>()),
+            };
         }
 
-        public async Task<IEnumerable<Box>> GetByLengthRangeAsync(int lowerBound, int upperBound)
+        public async Task<IEnumerable<Box>> GetByDimensionRangeAsync(string dimension, int lowerBound, int upperBound)
         {
-            return await _context.Boxes.Where(x => x.Length >= lowerBound && x.Length <= upperBound).ToListAsync();
+            return dimension switch
+            {
+                "length" => await _context.Boxes.Where(x => x.Length >= lowerBound && x.Length <= upperBound).ToListAsync(),
+                "width" => await _context.Boxes.Where(x => x.Width >= lowerBound && x.Width <= upperBound).ToListAsync(),
+                "height" => await _context.Boxes.Where(x => x.Height >= lowerBound && x.Height <= upperBound).ToListAsync(),
+                _ => await Task.FromResult(new List<Box>()),
+            };
         }
 
         public async Task<Box> AddAsync(Box box)

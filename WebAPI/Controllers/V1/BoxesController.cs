@@ -2,7 +2,9 @@
 using Application.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using WebAPI.Attributes;
@@ -76,41 +78,59 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Searches boxes by length")]
+        [SwaggerOperation(Summary = "Searches boxes by dimension")]
         [AllowAnonymous]
-        [HttpGet("searchBy/{length}")]
-        public async Task<IActionResult> SearchByLength(int length, int lowerBound, int upperBound)
+        [HttpGet("searchBy/{dimension}")]
+        public async Task<IActionResult> SearchByDimension(string dimension, int dimensionValue, int lowerBound, int upperBound)
         {
-            var boxes = await _boxService.GetBoxesByLengthAsync(length);
+            var boxes = await _boxService.GetBoxesByDimensionAsync(dimension, dimensionValue);
             if (boxes != null && boxes.Any())
             {
                 return Ok(new Response<IEnumerable<BoxDto>>(boxes)
                 {
                     Succeeded = true,
-                    Message = $"Found {boxes.Count()} boxes with exact length {length}mm"
+                    Message = $"Found {boxes.Count()} boxes with an exact {dimension} of {dimensionValue}mm"
                 });
             }
 
-            var lowerValue = length - lowerBound;
-            var upperValue = length + upperBound;
-            boxes = await _boxService.GetBoxesByLengthRangeAsync(lowerValue, upperValue);
-            if (boxes != null && boxes.Any())
+            var lowerValue = Math.Max(dimensionValue - lowerBound, 0);
+            var upperValue = Math.Max(dimensionValue + upperBound, 0);
+
+            boxes = await _boxService.GetBoxesByDimensionRangeAsync(dimension, lowerValue, upperValue);
+
+            if ((boxes != null || !dimension.IsNullOrEmpty()))
             {
-                return Ok(new Response<IEnumerable<BoxDto>>(boxes.OrderBy(b => b.Length))
+                var message = $"No boxes were found with an exact {dimension} of {dimensionValue}mm. Found {boxes!.Count()} boxes within the range {lowerValue}-{upperValue}mm";
+
+                return dimension switch
                 {
-                    Succeeded = true,
-                    Message = $"No boxes were found with an exact length of {length}mm. Found {boxes.Count()} boxes within the range {lowerValue}-{upperValue}mm"
-                });
+                    "length" => Ok(new Response<IEnumerable<BoxDto>>(boxes!.OrderBy(b => b.Length))
+                    {
+                        Succeeded = true,
+                        Message = message
+                    }),
+                    "width" => Ok(new Response<IEnumerable<BoxDto>>(boxes!.OrderBy(b => b.Width))
+                    {
+                        Succeeded = true,
+                        Message = message
+                    }),
+                    "height" => Ok(new Response<IEnumerable<BoxDto>>(boxes!.OrderBy(b => b.Height))
+                    {
+                        Succeeded = true,
+                        Message = message
+                    }),
+                    _ => Ok(new Response(false, $"Enter the correct dimension: 'length', 'width' or 'height'.")),
+                };
             }
 
-            return NotFound(new Response(false, $"No boxes were found with an exact length of {length}mm or within the range {lowerValue}-{upperValue}mm"));
+            return NotFound(new Response(false, $"No boxes were found with an exact {dimension} of {dimensionValue}mm or within the range {lowerValue}-{upperValue}mm"));
         }
 
         [ValidateFilter]
         [SwaggerOperation(Summary = "Creates a new box")]
         [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateBoxDto newBox)
+        public async Task<IActionResult> Create([FromBody] CreateBoxDto newBox)
         {
             var box = await _boxService.AddNewBoxAsync(newBox, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box)
@@ -123,7 +143,7 @@ namespace WebAPI.Controllers.V1
         [SwaggerOperation(Summary = "Updates an existing box")]
         [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpPut]
-        public async Task<IActionResult> Update(BoxDto updateBox)
+        public async Task<IActionResult> Update([FromBody] BoxDto updateBox)
         {
             await _boxService.UpdateBoxAsync(updateBox);
             return NoContent();

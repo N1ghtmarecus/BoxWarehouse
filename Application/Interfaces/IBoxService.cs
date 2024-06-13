@@ -8,8 +8,8 @@ namespace Application.Interfaces
         Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId);
         Task<int> GetAllBoxesCountAsync(string filterCutterId);
         Task<BoxDto> GetBoxByCutterIdAsync(int id);
-        Task<IEnumerable<BoxDto>> GetBoxesByLengthAsync(int length);
-        Task<IEnumerable<BoxDto>> GetBoxesByLengthRangeAsync(int lowerBound, int upperBound);
+        Task<IEnumerable<BoxDto>> GetBoxesByDimensionAsync(string dimension, int dimensionValue);
+        Task<IEnumerable<BoxDto>> GetBoxesByDimensionRangeAsync(string dimension, int lowerBound, int upperBound);
         Task<BoxDto> AddNewBoxAsync(CreateBoxDto newBox, string userId);
         Task UpdateBoxAsync(BoxDto updateBox);
         Task DeleteBoxAsync(int id);

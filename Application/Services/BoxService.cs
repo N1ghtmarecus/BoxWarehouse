@@ -40,15 +40,16 @@ namespace Application.Services
             return _mapper.Map<BoxDto>(box);
         }
 
-        public async Task<IEnumerable<BoxDto>> GetBoxesByLengthAsync(int length)
+        public async Task<IEnumerable<BoxDto>> GetBoxesByDimensionAsync(string dimension, int dimensionValue)
         {
-            var boxes = await _boxRepository.GetByLengthAsync(length);
+            var boxes = await _boxRepository.GetByDimensionAsync(dimension, dimensionValue);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
+
         }
 
-        public async Task<IEnumerable<BoxDto>> GetBoxesByLengthRangeAsync(int lowerBound, int upperBound)
+        public async Task<IEnumerable<BoxDto>> GetBoxesByDimensionRangeAsync(string dimension, int lowerBound, int upperBound)
         {
-            var boxes = await _boxRepository.GetByLengthRangeAsync(lowerBound, upperBound);
+            var boxes = await _boxRepository.GetByDimensionRangeAsync(dimension, lowerBound, upperBound);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
 
