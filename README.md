@@ -6,3 +6,4 @@ Used NuGet packages:
 - AzureCosmos
 - Swashbuckle
 - FluentEmail
+- FluentValidation
