@@ -29,7 +29,14 @@ namespace WebAPI.Controllers.V1
             _configuration = configuration;
             _emailSenderService = emailSenderService;
         }
-
+        /// <summary>
+        /// Registers the user in the system
+        /// </summary>
+        /// <response code="200">User created successfully!</response>
+        /// <response code="409">User already exists!</response>
+        /// <response code="500">User creation failed! Please check user details and try again.</response>
+        /// <param name="register"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("RegisterUser")]
         public async Task<IActionResult> RegisterUser(RegisterModel register)
@@ -37,7 +44,7 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User already exists!"));
+                return StatusCode(StatusCodes.Status409Conflict, new Response(false, "User already exists!"));
             }
 
             ApplicationUser user = new ApplicationUser()
@@ -62,6 +69,14 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response(true, "User created successfully!"));
         }
 
+        /// <summary>
+        /// Registers the manager in the system
+        /// </summary>
+        /// <response code="200">Manager created successfully!</response>
+        /// <response code="409">Manager already exists!</response>
+        /// <response code="500">Manager creation failed! Please check manager details and try again.</response>
+        /// <param name="register"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("RegisterManager")]
         public async Task<IActionResult> RegisterManager(RegisterModel register)
@@ -94,6 +109,15 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response(true, "Manager created successfully!"));
         }
 
+
+        /// <summary>
+        /// Registers the admin in the system
+        /// </summary>
+        /// <response code="200">Admin created successfully!</response>
+        /// <response code="409">Admin already exists!</response>
+        /// <response code="500">Admin creation failed! Please check admin details and try again.</response>
+        /// <param name="register"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("RegisterAdmin")]
         public async Task<IActionResult> RegisterAdmin(RegisterModel register)
@@ -126,6 +150,14 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response(true, "Admin created successfully!"));
         }
 
+
+        /// <summary>
+        /// Logs the user into the system
+        /// </summary>
+        /// <response code="200">User logged in successfully!</response>
+        /// <response code="401">Invalid credentials</response>
+        /// <param name="login"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(LoginModel login)
@@ -163,6 +195,15 @@ namespace WebAPI.Controllers.V1
             return Unauthorized(new Response(false, "Invalid credentials"));
         }
 
+
+        /// <summary>
+        /// Deletes the user from the system
+        /// </summary>
+        /// <response code="200">User deleted successfully!</response>
+        /// <response code="404">User not found.</response>
+        /// <response code="500">User deletion failed! Please check user details and try again.</response>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Authorize(Roles = UserRoles.Admin)]
         [Route("DeleteUser/{userId}")]
