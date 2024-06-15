@@ -9,6 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Models;
+using WebAPI.SwaggerExamples.Responses.Identity.Delete;
+using WebAPI.SwaggerExamples.Responses.Identity.Login;
+using WebAPI.SwaggerExamples.Responses.Identity.Register;
 using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
@@ -37,6 +40,9 @@ namespace WebAPI.Controllers.V1
         /// <response code="500">User creation failed! Please check user details and try again.</response>
         /// <param name="register"></param>
         /// <returns></returns>
+        [ProducesResponseType(typeof(RegisterResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RegisterResponseStatus409), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(RegisterResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpPost]
         [Route("RegisterUser")]
         public async Task<IActionResult> RegisterUser(RegisterModel register)
@@ -47,7 +53,7 @@ namespace WebAPI.Controllers.V1
                 return StatusCode(StatusCodes.Status409Conflict, new Response(false, "User already exists!"));
             }
 
-            ApplicationUser user = new ApplicationUser()
+            ApplicationUser user = new()
             {
                 Email = register.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -128,7 +134,7 @@ namespace WebAPI.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, $"User with username {register.Username} already exists!"));
             }
 
-            ApplicationUser user = new ApplicationUser()
+            ApplicationUser user = new()
             {
                 Email = register.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -158,6 +164,8 @@ namespace WebAPI.Controllers.V1
         /// <response code="401">Invalid credentials</response>
         /// <param name="login"></param>
         /// <returns></returns>
+        [ProducesResponseType(typeof(LoginResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponseStatus401), StatusCodes.Status401Unauthorized)]
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(LoginModel login)
@@ -188,11 +196,12 @@ namespace WebAPI.Controllers.V1
 
                 return Ok(new
                 {
+                    response = new Response(true, "User logged in successfully!"),
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    expiration = token.ValidTo,
                 });
             }
-            return Unauthorized(new Response(false, "Invalid credentials"));
+            return Unauthorized(new Response(false, "Invalid credentials!"));
         }
 
 
@@ -204,6 +213,9 @@ namespace WebAPI.Controllers.V1
         /// <response code="500">User deletion failed! Please check user details and try again.</response>
         /// <param name="userId"></param>
         /// <returns></returns>
+        [ProducesResponseType(typeof(DeleteResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DeleteResponseStatus404), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(DeleteResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpDelete]
         [Authorize(Roles = UserRoles.Admin)]
         [Route("DeleteUser/{userId}")]
@@ -212,16 +224,16 @@ namespace WebAPI.Controllers.V1
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound(new Response(false, "User not found"));
+                return NotFound(new Response(false, "User not found!"));
             }
 
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User deletion failed", result.Errors.Select(e => e.Description)));
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User deletion failed!", result.Errors.Select(e => e.Description)));
             }
 
-            return Ok(new Response(true, "User deleted successfully"));
+            return Ok(new Response(true, "User deleted successfully!"));
         }
     }
 }

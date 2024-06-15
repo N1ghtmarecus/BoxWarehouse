@@ -9,10 +9,10 @@ namespace WebAPI.SwaggerExamples.Requests
         {
             return new RegisterModel
             {
-                Username = "yourUniqueName",
-                Email = "yourEmailAddress@example.com",
-                Password = "yourPassword",
+                Username = "username",
+                Email = "email.address@example.com",
+                Password = "password",
             };
-            }
+        }
     }
 }
