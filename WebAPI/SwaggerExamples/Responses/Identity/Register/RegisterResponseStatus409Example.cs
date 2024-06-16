@@ -1,4 +1,5 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
+using WebAPI.Models;
 using WebAPI.Wrappers;
 
 namespace WebAPI.SwaggerExamples.Responses.Identity.Register
@@ -10,7 +11,7 @@ namespace WebAPI.SwaggerExamples.Responses.Identity.Register
             return new RegisterResponseStatus409()
             {
                 Succeeded = false,
-                Message = "Username already exists!"
+                Message = "User with this username already exists!"
             };
         }
     }

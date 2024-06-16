@@ -32,6 +32,7 @@ namespace WebAPI.Controllers.V1
             _configuration = configuration;
             _emailSenderService = emailSenderService;
         }
+
         /// <summary>
         /// Registers the user in the system
         /// </summary>
@@ -50,7 +51,7 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status409Conflict, new Response(false, "User already exists!"));
+                return StatusCode(StatusCodes.Status409Conflict, new Response(false, "User with this username already exists!"));
             }
 
             ApplicationUser user = new()
@@ -90,7 +91,7 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, $"User with username {register.Username} already exists!"));
+                return StatusCode(StatusCodes.Status409Conflict, new Response(false, "User with this username already exists!"));
             }
 
             ApplicationUser user = new()
@@ -115,7 +116,6 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response(true, "Manager created successfully!"));
         }
 
-
         /// <summary>
         /// Registers the admin in the system
         /// </summary>
@@ -131,7 +131,7 @@ namespace WebAPI.Controllers.V1
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, $"User with username {register.Username} already exists!"));
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User with this username already exists!"));
             }
 
             ApplicationUser user = new()
@@ -155,7 +155,6 @@ namespace WebAPI.Controllers.V1
 
             return Ok(new Response(true, "Admin created successfully!"));
         }
-
 
         /// <summary>
         /// Logs the user into the system
@@ -203,7 +202,6 @@ namespace WebAPI.Controllers.V1
             }
             return Unauthorized(new Response(false, "Invalid credentials!"));
         }
-
 
         /// <summary>
         /// Deletes the user from the system
