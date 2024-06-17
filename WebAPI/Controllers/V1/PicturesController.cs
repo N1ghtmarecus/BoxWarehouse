@@ -4,13 +4,14 @@ using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using WebAPI.SwaggerExamples.Responses.Picture.GET;
 using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
-    // [Authorize(Roles = UserRoles.AdminOrManager)]
+    [Authorize(Roles = UserRoles.AdminOrManager)]
     [ApiController]
     public class PicturesController : ControllerBase
     {
@@ -23,7 +24,15 @@ namespace WebAPI.Controllers.V1
             _boxService = boxService;
         }
 
-        [SwaggerOperation(Summary = "Retrieves a pictures by unique cutter ID")]
+        /// <summary>
+        /// "Retrieves pictures by unique cutter ID"
+        /// </summary>
+        /// <response code="200">"Retrieved 'x' pictures for Box with Cutter Id 'ID'."</response>
+        /// <response code="404">"No pictures found for Box with Cutter Id 'ID'."</response>
+        /// <param name="boxCutterId"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(RetrievesPicturesByCutterIdResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RetrievesPicturesByCutterIdResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpGet("[action]/{boxCutterId}")]
         public async Task<IActionResult> GetByBoxCutterIdAsync(int boxCutterId)
         {
@@ -31,7 +40,7 @@ namespace WebAPI.Controllers.V1
 
             if (pictures == null || !pictures.Any())
             {
-                return NotFound(new Response(false, $"Pictures for Box with Cutter Id '{boxCutterId}' do not exist."));
+                return NotFound(new Response(false, $"No pictures found for Box with Cutter Id '{boxCutterId}'."));
             }
 
             return Ok(new Response<IEnumerable<PictureDto>>(pictures)
@@ -41,7 +50,15 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Retrieves a picture by unique ID")]
+        /// <summary>
+        /// "Retrieves a picture by unique ID"
+        /// </summary>
+        /// <response code="200">"Picture 'name' retrieved successfully."</response>
+        /// <response code="404">"No picture found for Picture with Id 'ID'."</response>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(RetrievesPictureByIdResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RetrievesPictureByIdResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -49,7 +66,7 @@ namespace WebAPI.Controllers.V1
 
             if (picture == null)
             {
-                return NotFound(new Response(false, $"Picture with ID '{id}' does not exist."));
+                return NotFound(new Response(false, $"No picture found for Picture with Id '{id}'."));
             }
 
             return Ok(new Response<PictureDto>(picture)
@@ -84,25 +101,6 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Deletes a picture by unique ID")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            var picture = await _pictureService.GetPictureByIdAsync(id);
-
-            if (picture == null)
-            {
-                return NotFound(new Response(false, $"Picture with ID '{id}' currently does not exist."));
-            }
-
-            await _pictureService.DeletePictureAsync(id);
-
-            return Ok(new Response<PictureDto>(picture)
-            {
-                Succeeded = true,
-                Message = $"Picture '{picture.Name}' deleted successfully."
-            });
-        }
         [SwaggerOperation(Summary = "Updates the main picture of the box")]
         [HttpPut("{pictureId}/isMain")]
         public async Task<IActionResult> UpdateIsMainFlagAsync(int pictureId, bool isMain)
@@ -121,6 +119,26 @@ namespace WebAPI.Controllers.V1
             {
                 Succeeded = true,
                 Message = $"isMain flag of Picture '{picture.Name}' updated successfully."
+            });
+        }
+
+        [SwaggerOperation(Summary = "Deletes a picture by unique ID")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var picture = await _pictureService.GetPictureByIdAsync(id);
+
+            if (picture == null)
+            {
+                return NotFound(new Response(false, $"Picture with ID '{id}' currently does not exist."));
+            }
+
+            await _pictureService.DeletePictureAsync(id);
+
+            return Ok(new Response<PictureDto>(picture)
+            {
+                Succeeded = true,
+                Message = $"Picture '{picture.Name}' deleted successfully."
             });
         }
     }

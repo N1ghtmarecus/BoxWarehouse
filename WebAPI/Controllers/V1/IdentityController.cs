@@ -37,7 +37,7 @@ namespace WebAPI.Controllers.V1
         /// Registers the user in the system
         /// </summary>
         /// <response code="200">User created successfully!</response>
-        /// <response code="409">User already exists!</response>
+        /// <response code="409">User with this username already exists!</response>
         /// <response code="500">User creation failed! Please check user details and try again.</response>
         /// <param name="register"></param>
         /// <returns></returns>
@@ -80,7 +80,7 @@ namespace WebAPI.Controllers.V1
         /// Registers the manager in the system
         /// </summary>
         /// <response code="200">Manager created successfully!</response>
-        /// <response code="409">Manager already exists!</response>
+        /// <response code="409">Manager with this username already exists!</response>
         /// <response code="500">Manager creation failed! Please check manager details and try again.</response>
         /// <param name="register"></param>
         /// <returns></returns>
@@ -120,7 +120,7 @@ namespace WebAPI.Controllers.V1
         /// Registers the admin in the system
         /// </summary>
         /// <response code="200">Admin created successfully!</response>
-        /// <response code="409">Admin already exists!</response>
+        /// <response code="409">Admin with this username already exists!</response>
         /// <response code="500">Admin creation failed! Please check admin details and try again.</response>
         /// <param name="register"></param>
         /// <returns></returns>
