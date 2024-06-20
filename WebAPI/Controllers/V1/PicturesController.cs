@@ -3,9 +3,10 @@ using Application.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using WebAPI.SwaggerExamples.Responses.Picture.Delete;
 using WebAPI.SwaggerExamples.Responses.Picture.GET;
 using WebAPI.SwaggerExamples.Responses.Picture.Post;
+using WebAPI.SwaggerExamples.Responses.Picture.Put;
 using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
@@ -122,6 +123,8 @@ namespace WebAPI.Controllers.V1
         /// <param name="pictureId">The unique ID of the picture</param>
         /// <param name="isMain">Specifies whether the picture is the main picture of the box</param>
         /// <returns>Returns the updated picture</returns>
+        [ProducesResponseType(typeof(UpdatesMainPictureOfTheBoxResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UpdatesMainPictureOfTheBoxResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpPut("{pictureId}/isMain")]
         public async Task<IActionResult> UpdateIsMainFlagAsync(int pictureId, bool isMain)
         {
@@ -142,7 +145,15 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Deletes a picture by unique ID")]
+        /// <summary>
+        /// Deletes a picture by unique ID
+        /// </summary>
+        /// <response code="200">"The picture 'name' has been deleted successfully."</response>
+        /// <response code="404">"Picture with ID 'ID' currently does not exist."</response>
+        /// <param name="id">The unique ID of the picture</param>
+        /// <returns>Returns the deleted picture</returns>
+        [ProducesResponseType(typeof(DeletesPictureByIdResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DeletesPictureByIdResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
@@ -158,7 +169,7 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response<PictureDto>(picture)
             {
                 Succeeded = true,
-                Message = $"Picture '{picture.Name}' deleted successfully."
+                Message = $"The picture {picture.Name} has been deleted successfully."
             });
         }
     }
