@@ -10,6 +10,7 @@ using System.Security.Claims;
 using WebAPI.Attributes;
 using WebAPI.Filters;
 using WebAPI.Helpers;
+using WebAPI.SwaggerExamples.Responses.Boxes.Get;
 using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
@@ -27,12 +28,21 @@ namespace WebAPI.Controllers.V1
             _boxService = boxService;
         }
 
-        [SwaggerOperation(Summary = "Retrieves sort fields")]
+        /// <summary>
+        /// Retrieves the sort fields.
+        /// </summary>
+        /// <response code="200">Examples of fields that can be sorted</response>
+        /// <returns>The sort fields.</returns>
+        [ProducesResponseType(typeof(RetrievesSortFieldsResponseStatus200), StatusCodes.Status200OK)]
         [AllowAnonymous]
         [HttpGet("[action]")]
         public IActionResult GetSortFields()
         {
-            return Ok(SortingHelper.GetSortField().Select(x => x.Key));
+            return Ok(new
+            {
+                response = new Response(true, "Examples of fields that can be sorted"),
+                sorting = SortingHelper.GetSortField().Select(x => x.Key)
+            });
         }
 
         [SwaggerOperation(Summary = "Retrieves paged boxes")]
@@ -49,7 +59,11 @@ namespace WebAPI.Controllers.V1
 
             var totalRecords = await _boxService.GetAllBoxesCountAsync(filterCutterId);
 
-            return Ok(PaginationHelper.CreatePagedReponse(boxes, validPaginationFilter, totalRecords));
+            return Ok(new
+            {
+                response = new Response(true, "Paged boxes retrieved successfully."),
+                pagination = PaginationHelper.CreatePagedReponse(boxes, validPaginationFilter, totalRecords)
+            });
         }
 
         [SwaggerOperation(Summary = "Retrieves all boxes")]
