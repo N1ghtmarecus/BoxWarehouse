@@ -10,8 +10,7 @@ namespace WebAPI.SwaggerExamples.Responses.Boxes.Get
             return new RetrievesSortFieldsResponseStatus200
             {
                 Succeeded = true,
-                Message = "Examples of fields that can be sorted",
-                Errors = null
+                Message = "Examples of fields that can be sorted"
             };
         }
     }

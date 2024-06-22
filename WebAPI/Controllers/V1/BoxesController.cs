@@ -45,8 +45,20 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Retrieves paged boxes")]
-        [Authorize(Roles = UserRoles.AdminOrManagerOrUser)]
+        /// <summary>
+        /// Retrieves paged boxes.
+        /// </summary>
+        /// <response code="200">Paged boxes retrieved successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">No boxes found</response>
+        /// <param name="paginationFilter">The pagination filter.</param>
+        /// <param name="sortingFilter">The sorting filter.</param>
+        /// <param name="filterCutterId">The filter by cutter ID.</param>
+        /// <returns>The paged boxes.</returns>
+        [ProducesResponseType(typeof(RetrievesPagedBoxesResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RetrievesPagedBoxesResponseStatus401), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(RetrievesPagedBoxesResponseStatus404), StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter, [FromQuery] string filterCutterId = "")
         {
@@ -59,6 +71,11 @@ namespace WebAPI.Controllers.V1
 
             var totalRecords = await _boxService.GetAllBoxesCountAsync(filterCutterId);
 
+            if (boxes == null || !boxes.Any())
+            {
+                return NotFound(new Response(false, "No boxes found."));
+            }
+
             return Ok(new
             {
                 response = new Response(true, "Paged boxes retrieved successfully."),
@@ -66,7 +83,10 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Retrieves all boxes")]
+        /// <summary>
+        /// Retrieves all boxes.
+        /// </summary>
+        /// <returns>Returns all the boxes.</returns>
         [AllowAnonymous]
         [HttpGet("[action]")]
         public IQueryable<BoxDto> GetAll()
@@ -74,8 +94,14 @@ namespace WebAPI.Controllers.V1
             return _boxService.GetAllBoxes();
         }
 
-        [SwaggerOperation(Summary = "Retrieves a specific box by cutter ID")]
-        [Authorize(Roles = UserRoles.AdminOrManagerOrUser)]
+        /// <summary>
+        /// Retrieves a specific box by cutter ID.
+        /// </summary>
+        /// <response code="200">Box with cutter ID 'ID' retrieved successfully!</response>
+        /// <response code="404">Box with cutter ID 'cutterId' not found</response>
+        /// <param name="cutterId">The cutter ID of the box.</param>
+        /// <returns>The specific box.</returns>
+        [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpGet("{cutterId}")]
         public async Task<IActionResult> Get(int cutterId)
         {
@@ -88,7 +114,7 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response<BoxDto>(box)
             {
                 Succeeded = true,
-                Message = $"Box with cutter ID {cutterId} found"
+                Message = $"Box with cutter ID {cutterId} retrieved successfully!"
             });
         }
 

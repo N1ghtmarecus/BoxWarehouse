@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Box>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId)
         {
             return await _context.Boxes
-                .Where(m => m.CutterID.ToString().Contains(filterCutterId, StringComparison.CurrentCultureIgnoreCase))
+                .Where(m => m.CutterID.ToString().Contains(filterCutterId.ToLower()))
                 .OrderByPropertyName(sortField, ascending)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -33,7 +33,7 @@ namespace Infrastructure.Repositories
         public async Task<int> GetAllCountAsync(string filterCutterId)
         {
             return await _context.Boxes
-                .Where(m => m.CutterID.ToString().Contains(filterCutterId, StringComparison.CurrentCultureIgnoreCase))
+                .Where(m => m.CutterID.ToString().Contains(filterCutterId.ToLower()))
                 .CountAsync();
         }
 
