@@ -25,6 +25,12 @@
         {
         }
 
+        public Response(bool succeeded, string message)
+        {
+            Succeeded = succeeded;
+            Message = message;
+        }
+
         public Response(bool succeeded, string message, IEnumerable<string>? errors = null)
         {
             Succeeded = succeeded;

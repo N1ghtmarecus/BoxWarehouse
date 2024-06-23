@@ -46,17 +46,15 @@ namespace WebAPI.Controllers.V1
         }
 
         /// <summary>
-        /// Retrieves paged boxes.
+        /// Retrieves paged boxes
         /// </summary>
         /// <response code="200">Paged boxes retrieved successfully</response>
-        /// <response code="401">Unauthorized</response>
         /// <response code="404">No boxes found</response>
-        /// <param name="paginationFilter">The pagination filter.</param>
-        /// <param name="sortingFilter">The sorting filter.</param>
-        /// <param name="filterCutterId">The filter by cutter ID.</param>
-        /// <returns>The paged boxes.</returns>
+        /// <param name="paginationFilter">The pagination filter</param>
+        /// <param name="sortingFilter">The sorting filter</param>
+        /// <param name="filterCutterId">The filter by cutter ID</param>
+        /// <returns>The paged boxes</returns>
         [ProducesResponseType(typeof(RetrievesPagedBoxesResponseStatus200), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(RetrievesPagedBoxesResponseStatus401), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(RetrievesPagedBoxesResponseStatus404), StatusCodes.Status404NotFound)]
         [AllowAnonymous]
         [HttpGet]
@@ -84,9 +82,10 @@ namespace WebAPI.Controllers.V1
         }
 
         /// <summary>
-        /// Retrieves all boxes.
+        /// Retrieves all boxes
         /// </summary>
-        /// <returns>Returns all the boxes.</returns>
+        /// <response code="200">All boxes retrieved successfully</response>
+        /// <returns>Returns all the boxes</returns>
         [AllowAnonymous]
         [HttpGet("[action]")]
         public IQueryable<BoxDto> GetAll()
@@ -95,13 +94,15 @@ namespace WebAPI.Controllers.V1
         }
 
         /// <summary>
-        /// Retrieves a specific box by cutter ID.
+        /// Retrieves a specific box by cutter ID
         /// </summary>
-        /// <response code="200">Box with cutter ID 'ID' retrieved successfully!</response>
-        /// <response code="404">Box with cutter ID 'cutterId' not found</response>
-        /// <param name="cutterId">The cutter ID of the box.</param>
-        /// <returns>The specific box.</returns>
+        /// <response code="200">Box retrieved successfully</response>
+        /// <response code="404">Box not found</response>
+        /// <param name="cutterId">The cutter ID of the box</param>
+        /// <returns>Return the specific box</returns>
         [Authorize(Roles = UserRoles.AdminOrManager)]
+        [ProducesResponseType(typeof(RetrievesSpecificBoxByCutterIdResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RetrievesSpecificBoxByCutterIdResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpGet("{cutterId}")]
         public async Task<IActionResult> Get(int cutterId)
         {
@@ -118,8 +119,21 @@ namespace WebAPI.Controllers.V1
             });
         }
 
-        [SwaggerOperation(Summary = "Searches boxes by dimension")]
+        /// <summary>
+        /// Searches boxes by dimension
+        /// </summary>
+        /// <response code="200">The correct result of the search</response>
+        /// <response code="400">Wrong dimension value</response>
+        /// <response code="404">No boxes found</response>
+        /// <param name="dimension">The dimension to search by (length, width or height)</param>
+        /// <param name="dimensionValue">The value of the dimension</param>
+        /// <param name="lowerBound">The lower bound of the dimension range</param>
+        /// <param name="upperBound">The upper bound of the dimension range</param>
+        /// <returns>The result of the search</returns>
         [AllowAnonymous]
+        [ProducesResponseType(typeof(SearchesBoxesByDimensionResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SearchesBoxesByDimensionResponseStatus400), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(SearchesBoxesByDimensionResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpGet("searchBy/{dimension}")]
         public async Task<IActionResult> SearchByDimension(string dimension, int dimensionValue, int lowerBound, int upperBound)
         {
@@ -159,7 +173,7 @@ namespace WebAPI.Controllers.V1
                         Succeeded = true,
                         Message = message
                     }),
-                    _ => Ok(new Response(false, $"Enter the correct dimension: 'length', 'width' or 'height'.")),
+                    _ => BadRequest(new Response(false, $"Enter the correct dimension: length, width or height.")),
                 };
             }
 
