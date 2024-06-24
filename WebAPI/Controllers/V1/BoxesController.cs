@@ -251,7 +251,7 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="204">Box updated successfully</response>
         /// <response code="400">Box update failed</response>
-        /// <param name="updateBox"></param>
+        /// <param name="updateBox">The updated box information</param>
         /// <returns></returns>
         [Authorize(Roles = UserRoles.AdminOrManager)]
         [HttpPut]
@@ -273,7 +273,7 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="204">Box deleted successfully</response>
         /// <response code="400">Box deletion failed</response>
-        /// <param name="cutterId"></param>
+        /// <param name="cutterId">The unique cutter ID of the box</param>
         /// <returns></returns>
         [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{cutterId}")]
