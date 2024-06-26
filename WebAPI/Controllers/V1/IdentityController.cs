@@ -46,7 +46,7 @@ namespace WebAPI.Controllers.V1
         [ProducesResponseType(typeof(RegisterResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpPost]
         [Route("RegisterUser")]
-        public async Task<IActionResult> RegisterUser(RegisterModel register)
+        public async Task<IActionResult> RegisterUserAsync(RegisterModel register)
         {
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
@@ -86,7 +86,7 @@ namespace WebAPI.Controllers.V1
         /// <returns></returns>
         [HttpPost]
         [Route("RegisterManager")]
-        public async Task<IActionResult> RegisterManager(RegisterModel register)
+        public async Task<IActionResult> RegisterManagerAsync(RegisterModel register)
         {
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
@@ -126,7 +126,7 @@ namespace WebAPI.Controllers.V1
         /// <returns></returns>
         [HttpPost]
         [Route("RegisterAdmin")]
-        public async Task<IActionResult> RegisterAdmin(RegisterModel register)
+        public async Task<IActionResult> RegisterAdminAsync(RegisterModel register)
         {
             var userExist = await _userManager.FindByNameAsync(register.Username!);
             if (userExist != null)
@@ -156,18 +156,13 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response(true, "Admin created successfully!"));
         }
 
-        /// <summary>
-        /// Logs the user into the system
-        /// </summary>
-        /// <response code="200">User logged in successfully!</response>
-        /// <response code="401">Invalid credentials</response>
         /// <param name="login"></param>
         /// <returns></returns>
         [ProducesResponseType(typeof(LoginResponseStatus200), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(LoginResponseStatus401), StatusCodes.Status401Unauthorized)]
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginModel login)
+        public async Task<IActionResult> LoginAsync(LoginModel login)
         {
             var user = await _userManager.FindByNameAsync(login.Username!);
             if (user != null && await _userManager.CheckPasswordAsync(user, login.Password!))
@@ -193,11 +188,11 @@ namespace WebAPI.Controllers.V1
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
 
-                return Ok(new
+                return Ok(new AuthSuccessResponse
                 {
-                    response = new Response(true, "User logged in successfully!"),
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo,
+                    Response = new Response(true, "User logged in successfully!"),
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expiration = token.ValidTo,
                 });
             }
             return Unauthorized(new Response(false, "Invalid credentials!"));
@@ -217,7 +212,7 @@ namespace WebAPI.Controllers.V1
         [HttpDelete]
         [Authorize(Roles = UserRoles.Admin)]
         [Route("DeleteUser/{userId}")]
-        public async Task<IActionResult> DeleteUser(string userId)
+        public async Task<IActionResult> DeleteUserAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
