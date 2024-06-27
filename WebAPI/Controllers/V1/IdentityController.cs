@@ -156,6 +156,11 @@ namespace WebAPI.Controllers.V1
             return Ok(new Response(true, "Admin created successfully!"));
         }
 
+        /// <summary>
+        /// Logs the user into the system
+        /// </summary>
+        /// <response code="200">User logged in successfully!</response>
+        /// <response code="401">Invalid credentials</response>
         /// <param name="login"></param>
         /// <returns></returns>
         [ProducesResponseType(typeof(LoginResponseStatus200), StatusCodes.Status200OK)]
