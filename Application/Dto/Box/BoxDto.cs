@@ -17,6 +17,7 @@ namespace Application.Dto
         {
             profile.CreateMap<Box, BoxDto>()
                 .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(src => src.Created));
+            profile.CreateMap<BoxDto, Box>();
         }
     }
 }
