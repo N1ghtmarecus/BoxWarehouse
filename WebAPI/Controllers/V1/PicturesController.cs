@@ -13,7 +13,7 @@ namespace WebAPI.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
-    [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
+    [Authorize(Roles = "Admin, Employee")]
     [ApiController]
     public class PicturesController : ControllerBase
     {
@@ -30,6 +30,7 @@ namespace WebAPI.Controllers.V1
         /// Retrieves pictures by unique cutter ID
         /// </summary>
         /// <response code="200">"Retrieved 'count' pictures for Box with Cutter Id 'ID'."</response>
+        /// <response code="403">"Unauthorized to retieve pictures"</response>
         /// <response code="404">"No pictures found for Box with Cutter Id 'ID'."</response>
         /// <param name="boxCutterId">The unique cutter ID of the box</param>
         /// <returns>Returns the pictures for the box with the specified cutter ID</returns>
@@ -56,6 +57,7 @@ namespace WebAPI.Controllers.V1
         /// Retrieves a picture by unique ID
         /// </summary>
         /// <response code="200">"Picture 'name' retrieved successfully."</response>
+        /// <response code="403">"Unauthorized to retrieve picture"</response>
         /// <response code="404">"No picture found for Picture with Id 'ID'."</response>
         /// <param name="id">The unique ID of the picture</param>
         /// <returns>Returns the picture with the specified ID</returns>
@@ -83,6 +85,7 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="201">"Picture 'name' added to the box with cutter id 'ID' successfully."</response>
         /// <response code="400">"Failed to add picture to the box."</response>
+        /// <response code="403">"Unauthorized to add picture to the box"</response>
         /// <response code="404">"Box with Cutter Id 'ID' does not exist."</response>
         /// <param name="boxCutterId">The unique cutter ID of the box</param>
         /// <param name="file">The picture file to be added</param>
@@ -119,6 +122,8 @@ namespace WebAPI.Controllers.V1
         /// Updates the main picture of the box
         /// </summary>
         /// <response code="200">"The main picture of the box has been updated successfully."</response>
+        /// <response code="400">"Failed to update the main picture of the box."</response>
+        /// <response code="403">"Unauthorized to update the main picture of the box"</response>
         /// <response code="404">"Picture with ID 'ID' does not exist."</response>
         /// <param name="pictureId">The unique ID of the picture</param>
         /// <param name="isMain">Specifies whether the picture is the main picture of the box</param>
@@ -149,6 +154,7 @@ namespace WebAPI.Controllers.V1
         /// Deletes a picture by unique ID
         /// </summary>
         /// <response code="200">"The picture 'name' has been deleted successfully."</response>
+        /// <response code="403">"Unauthorized to delete picture"</response>
         /// <response code="404">"Picture with ID 'ID' currently does not exist."</response>
         /// <param name="id">The unique ID of the picture</param>
         /// <returns>Returns the deleted picture</returns>

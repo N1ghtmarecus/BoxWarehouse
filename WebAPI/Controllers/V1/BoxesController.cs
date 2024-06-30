@@ -121,10 +121,11 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="200">Box retrieved successfully</response>
         /// <response code="400">Box retrieval failed</response>
+        /// <response code="403">Unauthorized to retrieve the box</response>
         /// <response code="404">Box not found</response>
         /// <param name="cutterId">The cutter ID of the box</param>
         /// <returns>Return the specific box</returns>
-        [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
+        [Authorize(Roles = "Admin, Employee")]
         [ProducesResponseType(typeof(RetrievesSpecificBoxByCutterIdResponseStatus200), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RetrievesSpecificBoxByCutterIdResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpGet("{cutterId}")]
@@ -223,11 +224,12 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="201">Box created successfully</response>
         /// <response code="400">Box creation failed</response>
+        /// <response code="403">Unauthorized to create a box</response>
         /// <param name="newBox">The new box to create</param>
         /// <returns>The created box</returns>
         [ProducesResponseType(typeof(CreatesNewBoxResponseStatus201), StatusCodes.Status201Created)]
         [ValidateFilter]
-        [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBoxDto newBox)
         {
@@ -251,9 +253,10 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="204">Box updated successfully</response>
         /// <response code="400">Box update failed</response>
+        /// <response code="403">Unauthorized to update a box</response>
         /// <param name="updateBox">The updated box information</param>
         /// <returns></returns>
-        [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] BoxDto updateBox)
         {
@@ -273,9 +276,10 @@ namespace WebAPI.Controllers.V1
         /// </summary>
         /// <response code="204">Box deleted successfully</response>
         /// <response code="400">Box deletion failed</response>
+        /// <response code="403">Unauthorized to delete a box</response>
         /// <param name="cutterId">The unique cutter ID of the box</param>
         /// <returns></returns>
-        [Authorize(Roles = nameof(UserRoles.Admin))]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{cutterId}")]
         public async Task<IActionResult> Delete(int cutterId)
         {
