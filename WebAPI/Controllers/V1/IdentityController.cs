@@ -34,7 +34,7 @@ namespace WebAPI.Controllers.V1
         }
 
         /// <summary>
-        /// Registers the user in the system
+        /// Registers the customer in the system
         /// </summary>
         /// <response code="200">User created successfully!</response>
         /// <response code="409">User with this username already exists!</response>
@@ -45,7 +45,7 @@ namespace WebAPI.Controllers.V1
         [ProducesResponseType(typeof(RegisterResponseStatus409), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(RegisterResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpPost]
-        [Route("RegisterUser")]
+        [Route("RegisterCustomer")]
         public async Task<IActionResult> RegisterUserAsync(RegisterModel register)
         {
             var userExist = await _userManager.FindByNameAsync(register.Username!);
@@ -66,10 +66,10 @@ namespace WebAPI.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User creation failed! Please check user details and try again.", result.Errors.Select(e => e.Description)));
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Customer.ToString()))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Customer.ToString()));
 
-            await _userManager.AddToRoleAsync(user, UserRoles.User);
+            await _userManager.AddToRoleAsync(user, UserRoles.Customer.ToString());
 
             await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
@@ -77,15 +77,18 @@ namespace WebAPI.Controllers.V1
         }
 
         /// <summary>
-        /// Registers the manager in the system
+        /// Registers the employee in the system
         /// </summary>
-        /// <response code="200">Manager created successfully!</response>
-        /// <response code="409">Manager with this username already exists!</response>
-        /// <response code="500">Manager creation failed! Please check manager details and try again.</response>
+        /// <response code="200">User created successfully!</response>
+        /// <response code="409">User with this username already exists!</response>
+        /// <response code="500">User creation failed! Please check User details and try again.</response>
         /// <param name="register"></param>
         /// <returns></returns>
+        [ProducesResponseType(typeof(RegisterResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RegisterResponseStatus409), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(RegisterResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpPost]
-        [Route("RegisterManager")]
+        [Route("RegisterEmployee")]
         public async Task<IActionResult> RegisterManagerAsync(RegisterModel register)
         {
             var userExist = await _userManager.FindByNameAsync(register.Username!);
@@ -103,27 +106,30 @@ namespace WebAPI.Controllers.V1
             var result = await _userManager.CreateAsync(user, register.Password!);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "Manager creation failed! Please check manager details and try again.", result.Errors.Select(e => e.Description)));
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User creation failed! Please check manager details and try again.", result.Errors.Select(e => e.Description)));
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Manager))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Manager));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Employee.ToString()))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Employee.ToString()));
 
-            await _userManager.AddToRoleAsync(user, UserRoles.Manager);
+            await _userManager.AddToRoleAsync(user, UserRoles.Employee.ToString());
 
             await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
-            return Ok(new Response(true, "Manager created successfully!"));
+            return Ok(new Response(true, "User created successfully!"));
         }
 
         /// <summary>
         /// Registers the admin in the system
         /// </summary>
-        /// <response code="200">Admin created successfully!</response>
-        /// <response code="409">Admin with this username already exists!</response>
-        /// <response code="500">Admin creation failed! Please check admin details and try again.</response>
+        /// <response code="200">User created successfully!</response>
+        /// <response code="409">User with this username already exists!</response>
+        /// <response code="500">User creation failed! Please check user details and try again.</response>
         /// <param name="register"></param>
         /// <returns></returns>
+        [ProducesResponseType(typeof(RegisterResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RegisterResponseStatus409), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(RegisterResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpPost]
         [Route("RegisterAdmin")]
         public async Task<IActionResult> RegisterAdminAsync(RegisterModel register)
@@ -143,17 +149,17 @@ namespace WebAPI.Controllers.V1
             var result = await _userManager.CreateAsync(user, register.Password!);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "Admin creation failed! Please check admin details and try again.", result.Errors.Select(e => e.Description)));
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response(false, "User creation failed! Please check admin details and try again.", result.Errors.Select(e => e.Description)));
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin.ToString()))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin.ToString()));
 
-            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin.ToString());
 
             await _emailSenderService.Send(user.Email!, "Registration confirmation", EmailTemplate.WelcomeMessage, user);
 
-            return Ok(new Response(true, "Admin created successfully!"));
+            return Ok(new Response(true, "User created successfully!"));
         }
 
         /// <summary>
@@ -215,7 +221,7 @@ namespace WebAPI.Controllers.V1
         [ProducesResponseType(typeof(DeleteResponseStatus404), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(DeleteResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpDelete]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         [Route("DeleteUser/{userId}")]
         public async Task<IActionResult> DeleteUserAsync(string userId)
         {

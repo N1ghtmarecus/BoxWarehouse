@@ -13,7 +13,7 @@ namespace WebAPI.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
-    [Authorize(Roles = UserRoles.AdminOrManager)]
+    [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
     [ApiController]
     public class PicturesController : ControllerBase
     {

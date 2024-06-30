@@ -124,7 +124,7 @@ namespace WebAPI.Controllers.V1
         /// <response code="404">Box not found</response>
         /// <param name="cutterId">The cutter ID of the box</param>
         /// <returns>Return the specific box</returns>
-        [Authorize(Roles = UserRoles.AdminOrManager)]
+        [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
         [ProducesResponseType(typeof(RetrievesSpecificBoxByCutterIdResponseStatus200), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RetrievesSpecificBoxByCutterIdResponseStatus404), StatusCodes.Status404NotFound)]
         [HttpGet("{cutterId}")]
@@ -227,7 +227,7 @@ namespace WebAPI.Controllers.V1
         /// <returns>The created box</returns>
         [ProducesResponseType(typeof(CreatesNewBoxResponseStatus201), StatusCodes.Status201Created)]
         [ValidateFilter]
-        [Authorize(Roles = UserRoles.AdminOrManager)]
+        [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBoxDto newBox)
         {
@@ -253,7 +253,7 @@ namespace WebAPI.Controllers.V1
         /// <response code="400">Box update failed</response>
         /// <param name="updateBox">The updated box information</param>
         /// <returns></returns>
-        [Authorize(Roles = UserRoles.AdminOrManager)]
+        [Authorize(Roles = nameof(UserRoles.AdminOrEmployee))]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] BoxDto updateBox)
         {
@@ -275,7 +275,7 @@ namespace WebAPI.Controllers.V1
         /// <response code="400">Box deletion failed</response>
         /// <param name="cutterId">The unique cutter ID of the box</param>
         /// <returns></returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         [HttpDelete("{cutterId}")]
         public async Task<IActionResult> Delete(int cutterId)
         {

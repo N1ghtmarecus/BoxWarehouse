@@ -1,12 +1,15 @@
 ﻿namespace Infrastructure.Identity
 {
-    public static class UserRoles
+    [Flags]
+    public enum UserRoles
     {
-        public const string Admin = "Admin";
-        public const string Manager = "Manager";
-        public const string User = "User";
-        public const string AdminOrUser = Admin + "," + User;
-        public const string AdminOrManager = Admin + "," + Manager;
-        public const string AdminOrManagerOrUser = Admin + "," + Manager + "," + User;
+        None     = 0,
+        Admin    = 1,
+        Employee = 2,
+        Customer = 4,
+
+        AdminOrCustomer           = Admin | Customer,
+        AdminOrEmployee           = Admin | Employee,
+        AdminOrEmployeeOrCustomer = Admin | Employee | Customer
     }
 }
