@@ -26,9 +26,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 (Current features...)
 
-- User Authentication: Register and authenticate users with different roles (User, Manager, Admin).
+- User Authentication: Register and authenticate users with different roles (Customer, Employee, Admin).
 - Box Management: Add, update, and delete boxes in the warehouse.
 - Picture Uploads: Attach pictures to boxes for better visualization.
+- SDK: The BoxWarehouse SDK provides a comprehensive interface for integrating with the BoxWarehouse platform, enabling developers to easily implement user authentication, box management, and picture uploads in their applications.
 
 Swagger UI is available for exploring the API in detail and testing the endpoints.
 
@@ -64,6 +65,7 @@ This project uses several NuGet packages to provide its functionality. Below is 
 - **Swashbuckle.AspNetCore** (`Swashbuckle.AspNetCore`, `Swashbuckle.AspNetCore.Annotations`, `Swashbuckle.AspNetCore.Filters`): Swagger tooling for API's built with ASP.NET Core. Version: 6.4.0, 6.6.1 (Annotations), 8.0.2 (Filters)
 - **Cosmonaut** (`Cosmonaut`, `Cosmonaut.Extensions.Microsoft.DependencyInjection`): A library that simplifies the use of Azure Cosmos DB. Version: 2.11.3 (Cosmonaut), 2.3.0 (Extensions)
 - **Humanizer.Core**: A library that helps in manipulating and displaying strings, enums, dates, times, timespans, numbers, and quantities. Version: 2.14.1
+- **Refit**: Simplifies the creation of REST API clients by turning interfaces into live HTTP services. Version: 6.0.94
 
 Please refer to the `csproj` file or the NuGet Package Manager in Visual Studio for a complete list of dependencies and their versions.
 
