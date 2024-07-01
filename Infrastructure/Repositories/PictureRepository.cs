@@ -25,13 +25,15 @@ namespace Infrastructure.Repositories
         public async Task<Picture?> GetMainPictureForBoxAsync(int? boxCutterId)
         {
             return await _context.Pictures
-                .Where(p => p.Boxes!.Any(b => b.CutterID == boxCutterId) && p.IsMain == true)
+                .Where(p => p.Boxes!.Any(b => b.CutterID == boxCutterId) && p.IsMain)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<Picture?> GetByIdAsync(int? id)
         {
-            return await _context.Pictures.SingleOrDefaultAsync(p => p.Id == id);
+            return await _context.Pictures
+                .Include(p => p.Boxes)
+                .SingleOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Picture> AddAsync(Picture picture)

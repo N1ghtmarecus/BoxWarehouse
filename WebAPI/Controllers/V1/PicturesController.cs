@@ -70,7 +70,7 @@ namespace WebAPI.Controllers.V1
 
             if (picture == null)
             {
-                return NotFound(new Response(false, $"No picture found for Picture with Id '{id}'."));
+                return NotFound(new Response(false, $"No picture found for picture with Id '{id}'."));
             }
 
             return Ok(new Response<PictureDto>(picture)
@@ -141,7 +141,7 @@ namespace WebAPI.Controllers.V1
             }
 
             picture.IsMain = isMain;
-            await _pictureService.UpdatePictureAsync(picture);
+            await _pictureService.UpdatePictureAsync(picture, isMain);
 
             return Ok(new Response<PictureDto>(picture)
             {

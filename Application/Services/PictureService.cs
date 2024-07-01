@@ -67,9 +67,20 @@ namespace Application.Services
             await _pictureRepository.DeleteAsync(picture!);
         }
 
-        public async Task UpdatePictureAsync(PictureDto picture)
+        public async Task UpdatePictureAsync(PictureDto picture, bool isMain)
         {
             var existingPicture = await _pictureRepository.GetByIdAsync(picture.Id);
+
+            if (isMain)
+            {
+                var mainPicture = await _pictureRepository.GetMainPictureForBoxAsync(existingPicture!.Boxes!.FirstOrDefault()!.CutterID);
+                if (mainPicture != null)
+                {
+                    mainPicture.IsMain = false;
+                    await _pictureRepository.UpdateAsync(mainPicture);
+                }
+            }
+
             await _pictureRepository.UpdateAsync(_mapper.Map(picture, existingPicture)!);
         }
     }
