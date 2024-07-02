@@ -1,4 +1,6 @@
-﻿namespace WebAPI.Wrappers
+﻿using System.Text.Json.Serialization;
+
+namespace WebAPI.Wrappers
 {
     public class Response<T> : Response
     {
@@ -19,6 +21,8 @@
     {
         public bool Succeeded { get; set; }
         public string? Message { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<string>? Errors { get; set; }
 
         public Response()
@@ -31,7 +35,7 @@
             Message = message;
         }
 
-        public Response(bool succeeded, string message, IEnumerable<string>? errors = null)
+        public Response(bool succeeded, string message, IEnumerable<string>? errors)
         {
             Succeeded = succeeded;
             Message = message;
