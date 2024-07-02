@@ -69,19 +69,27 @@ namespace Application.Services
 
         public async Task UpdatePictureAsync(PictureDto picture, bool isMain)
         {
-            var existingPicture = await _pictureRepository.GetByIdAsync(picture.Id);
+            var existingPicture = await _pictureRepository.GetByIdAsync(picture.Id) ?? throw new ArgumentException($"Picture with ID '{picture.Id}' does not exist.");
 
-            if (isMain)
+            switch (existingPicture.IsMain, isMain)
             {
-                var mainPicture = await _pictureRepository.GetMainPictureForBoxAsync(existingPicture!.Boxes!.FirstOrDefault()!.CutterID);
-                if (mainPicture != null)
-                {
-                    mainPicture.IsMain = false;
-                    await _pictureRepository.UpdateAsync(mainPicture);
-                }
-            }
+                case (true, false):
+                    throw new ArgumentException("Cannot set the main picture to false for the current main picture.");
+                case (true, true):
+                    throw new ArgumentException("The picture is already the main picture.");
+                case (false, false):
+                    throw new ArgumentException("The picture is already not the main picture.");
+                default:
+                    var mainPicture = await _pictureRepository.GetMainPictureForBoxAsync(existingPicture!.Boxes!.FirstOrDefault()!.CutterID);
+                    if (mainPicture != null)
+                    {
+                        mainPicture.IsMain = false;
+                        await _pictureRepository.UpdateAsync(mainPicture);
+                    }
 
-            await _pictureRepository.UpdateAsync(_mapper.Map(picture, existingPicture)!);
+                    await _pictureRepository.UpdateAsync(_mapper.Map(picture, existingPicture)!);
+                    break;
+            }
         }
     }
 }
