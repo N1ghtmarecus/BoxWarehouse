@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Models;
+using WebAPI.SwaggerExamples.Responses.Identity.ChangePassword;
 using WebAPI.SwaggerExamples.Responses.Identity.Delete;
 using WebAPI.SwaggerExamples.Responses.Identity.Login;
 using WebAPI.SwaggerExamples.Responses.Identity.Register;
@@ -238,6 +239,31 @@ namespace WebAPI.Controllers.V1
             }
 
             return Ok(new Response(true, "User deleted successfully!"));
+        }
+
+        /// <summary>
+        /// Changes the password of the user
+        /// </summary>
+        /// <response code="200">Password changed successfully!</response>
+        /// <response code="400">Password change failed! Please check user details and try again.</response>
+        /// <param name="changePassword"></param>       
+        /// <returns></returns>  
+        [ProducesResponseType(typeof(ChangePasswordResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ChangePasswordResponseStatus400), StatusCodes.Status400BadRequest)]
+        [HttpPost]
+        [Authorize]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordModel changePassword)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity!.Name!);
+
+            var result = await _userManager.ChangePasswordAsync(user!, changePassword.CurrentPassword!, changePassword.NewPassword!);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new Response(false, "Password change failed! Please check user details and try again.", result.Errors.Select(e => e.Description)));
+            }
+
+            return Ok(new Response(true, "Password changed successfully!"));
         }
     }
 }
