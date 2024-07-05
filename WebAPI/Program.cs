@@ -1,3 +1,8 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
+using WebAPI.HealthChecks;
 using WebAPI.Installers;
 using WebAPI.Middlewares;
 
@@ -23,6 +28,9 @@ public class Program
         }
 
         app.UseMiddleware<ErrorHandlerMiddleware>();
+
+
+
         app.UseHttpsRedirection();
 
         app.UseRouting();
@@ -30,6 +38,14 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.MapHealthChecks("health", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+
+        app.MapHealthChecksUI();
 
         app.Run();
     }
