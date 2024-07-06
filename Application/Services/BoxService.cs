@@ -3,6 +3,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -10,11 +11,13 @@ namespace Application.Services
     {
         private readonly IBoxRepository _boxRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public BoxService(IBoxRepository boxRepository, IMapper mapper)
+        public BoxService(IBoxRepository boxRepository, IMapper mapper, ILogger<BoxService> logger)
         {
             _boxRepository = boxRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public IQueryable<BoxDto> GetAllBoxes()
@@ -25,6 +28,8 @@ namespace Application.Services
 
         public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId)
         {
+            _logger.LogDebug("Fetching all boxes");
+            _logger.LogInformation($"pageNumber: {pageNumber} | pageSize: {pageSize}");
             var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending, filterCutterId);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }

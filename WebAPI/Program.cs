@@ -1,8 +1,7 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json;
-using WebAPI.HealthChecks;
+using NLog;
+using NLog.Web;
 using WebAPI.Installers;
 using WebAPI.Middlewares;
 
@@ -18,6 +17,8 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.InstallServicesInAssembly(builder.Configuration);
 
+        builder.Host.UseNLog();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -28,8 +29,6 @@ public class Program
         }
 
         app.UseMiddleware<ErrorHandlerMiddleware>();
-
-
 
         app.UseHttpsRedirection();
 
@@ -47,6 +46,21 @@ public class Program
 
         app.MapHealthChecksUI();
 
-        app.Run();
+        var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+
+        try
+        {
+            // throw new Exception("Fatal error!");
+            app.Run();
+        }
+        catch (Exception ex)
+        {
+            logger.Fatal(ex, "Application stopped because of exception");
+            throw;
+        }
+        finally
+        {
+            LogManager.Shutdown();
+        }
     }
 }
