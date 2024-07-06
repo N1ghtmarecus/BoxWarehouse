@@ -64,8 +64,10 @@ This project uses several NuGet packages to provide its functionality. Below is 
 - **Microsoft.AspNetCore.Identity** (`Microsoft.AspNetCore.Identity`, `Microsoft.AspNetCore.Identity.EntityFrameworkCore`): ASP.NET Core Identity framework for managing users, roles, and authentication. Version: 2.1.39 (Identity), 8.0.6 (Identity.EntityFrameworkCore)
 - **Swashbuckle.AspNetCore** (`Swashbuckle.AspNetCore`, `Swashbuckle.AspNetCore.Annotations`, `Swashbuckle.AspNetCore.Filters`): Swagger tooling for API's built with ASP.NET Core. Version: 6.4.0, 6.6.1 (Annotations), 8.0.2 (Filters)
 - **Cosmonaut** (`Cosmonaut`, `Cosmonaut.Extensions.Microsoft.DependencyInjection`): A library that simplifies the use of Azure Cosmos DB. Version: 2.11.3 (Cosmonaut), 2.3.0 (Extensions)
-- **Humanizer.Core**: A library that helps in manipulating and displaying strings, enums, dates, times, timespans, numbers, and quantities. Version: 2.14.1
-- **Refit**: Simplifies the creation of REST API clients by turning interfaces into live HTTP services. Version: 6.0.94
+- **Humanizer.Core** A library that helps in manipulating and displaying strings, enums, dates, times, timespans, numbers, and quantities. Version: 2.14.1
+- **Refit** (`Refit`) Simplifies the creation of REST API clients by turning interfaces into live HTTP services. Version: 6.0.94
+- **HealthChecks** (`(AspNetCore.HealthChecks.UI`, `AspNetCore.HealthChecks.UI.Client`, `AspNetCore.HealthChecks.UI.InMemory.Storage`, `Microsoft.Extensions.Diagnostics.HealthChecks`, `Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore`) Provides health check endpoints and a UI for monitoring the health of your application and its dependencies. Version: 8.0.1
+- **NLog** (`NLog.Web.AspNetCore`) A logging platform for .NET with rich log routing and management capabilities. Version: 5.3.11
 
 Please refer to the `csproj` file or the NuGet Package Manager in Visual Studio for a complete list of dependencies and their versions.
 
