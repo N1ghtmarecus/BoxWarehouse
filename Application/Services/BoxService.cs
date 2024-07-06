@@ -3,7 +3,9 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using System.Security.Principal;
 
 namespace Application.Services
 {
@@ -12,12 +14,14 @@ namespace Application.Services
         private readonly IBoxRepository _boxRepository;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly IPrincipal _principal;
 
-        public BoxService(IBoxRepository boxRepository, IMapper mapper, ILogger<BoxService> logger)
+        public BoxService(IBoxRepository boxRepository, IMapper mapper, ILogger<BoxService> logger, IPrincipal principal)
         {
             _boxRepository = boxRepository;
             _mapper = mapper;
             _logger = logger;
+            _principal = principal;
         }
 
         public IQueryable<BoxDto> GetAllBoxes()
@@ -28,8 +32,9 @@ namespace Application.Services
 
         public async Task<IEnumerable<BoxDto>> GetAllBoxesAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterCutterId)
         {
-            _logger.LogDebug("Fetching all boxes");
-            _logger.LogInformation($"pageNumber: {pageNumber} | pageSize: {pageSize}");
+            _logger.LogDebug("Person {_principal.Identity.Name} fetching all boxes", _principal.Identity!.Name);
+            _logger.LogInformation("Person {_principal.Identity.Name} filled pageNumber: {pageNumber} | pageSize: {pageSize} | sortField: {sortField} | ascending: {ascending} | filterCutterId: {filterCutterId}", _principal.Identity.Name, pageNumber, pageSize, sortField, ascending, filterCutterId);
+            
             var boxes = await _boxRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending, filterCutterId);
             return _mapper.Map<IEnumerable<BoxDto>>(boxes);
         }
