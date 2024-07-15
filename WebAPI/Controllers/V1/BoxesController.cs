@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Security.Principal;
 using WebAPI.Attributes;
 using WebAPI.Filters;
 using WebAPI.Helpers;
@@ -20,10 +21,14 @@ namespace WebAPI.Controllers.V1
     public class BoxesController : ControllerBase
     {
         private readonly IBoxService _boxService;
+        private readonly ILogger _logger;
+        private readonly IPrincipal _principal;
 
-        public BoxesController(IBoxService boxService)
+        public BoxesController(IBoxService boxService, ILogger logger, IPrincipal principal)
         {
             _boxService = boxService;
+            _logger = logger;
+            _principal = principal;
         }
 
         /// <summary>
@@ -39,6 +44,7 @@ namespace WebAPI.Controllers.V1
         {
             try
             {
+                _logger.LogInformation("{_principal.Identity.Name} fetching sort fields", _principal.Identity!.Name);
                 return Ok(new
                 {
                     response = new Response(true, "Examples of fields that can be sorted"),
@@ -47,6 +53,7 @@ namespace WebAPI.Controllers.V1
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to fetch sort fields", _principal.Identity!.Name);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
@@ -80,9 +87,11 @@ namespace WebAPI.Controllers.V1
 
                 if (boxes == null || !boxes.Any())
                 {
+                    _logger.LogWarning("{_principal.Identity.Name} failed to fetch paged boxes - 'No boxes found'", _principal.Identity!.Name);
                     return NotFound(new Response(false, "No boxes found."));
                 }
 
+                _logger.LogInformation("{_principal.Identity.Name} fetched {boxes.Count()} paged boxes", _principal.Identity!.Name, boxes.Count());
                 return Ok(new
                 {
                     response = new Response(true, "Paged boxes retrieved successfully."),
@@ -91,6 +100,7 @@ namespace WebAPI.Controllers.V1
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to fetch paged boxes", _principal.Identity!.Name);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
@@ -107,10 +117,12 @@ namespace WebAPI.Controllers.V1
         {
             try
             {
+                _logger.LogInformation("{_principal.Identity.Name} fetching all boxes", _principal.Identity!.Name);
                 return _boxService.GetAllBoxes();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to fetch all boxes", _principal.Identity!.Name);
                 return (IQueryable<BoxDto>)BadRequest(new Response(false, ex.Message));
             }
         }
@@ -135,9 +147,11 @@ namespace WebAPI.Controllers.V1
                 var box = await _boxService.GetBoxByCutterIdAsync(cutterId);
                 if (box == null)
                 {
+                    _logger.LogWarning("{_principal.Identity.Name} failed to fetch box by Cutter ID: {cutterId} - 'Box not found'", _principal.Identity!.Name, cutterId);
                     return NotFound(new Response(false, $"Box with cutter ID {cutterId} not found."));
                 }
 
+                _logger.LogInformation("{_principal.Identity.Name} fetched box by Cutter ID: {cutterId}", _principal.Identity!.Name, cutterId);
                 return Ok(new Response<BoxDto>(box)
                 {
                     Succeeded = true,
@@ -146,6 +160,7 @@ namespace WebAPI.Controllers.V1
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to fetch box by Cutter ID: {cutterId}", _principal.Identity!.Name, cutterId);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
@@ -173,6 +188,7 @@ namespace WebAPI.Controllers.V1
                 var boxes = await _boxService.GetBoxesByDimensionAsync(dimension, dimensionValue);
                 if (boxes != null && boxes.Any())
                 {
+                    _logger.LogInformation("{_principal.Identity.Name} fetched {boxes.Count()} boxes with an exact {dimension} of {dimensionValue}mm", _principal.Identity!.Name, boxes.Count(), dimension, dimensionValue);
                     return Ok(new Response<IEnumerable<BoxDto>>(boxes)
                     {
                         Succeeded = true,
@@ -189,6 +205,7 @@ namespace WebAPI.Controllers.V1
                 {
                     var message = $"No boxes were found with an exact {dimension} of {dimensionValue}mm. Found {boxes!.Count()} boxes within the range {lowerValue}-{upperValue}mm";
 
+                    _logger.LogInformation("{_principal.Identity.Name} fetched {boxes.Count()} boxes with an exact {dimension} of {dimensionValue}mm or within the range {lowerValue}-{upperValue}mm", _principal.Identity!.Name, boxes.Count(), dimension, dimensionValue, lowerValue, upperValue);
                     return dimension switch
                     {
                         "length" => Ok(new Response<IEnumerable<BoxDto>>(boxes!.OrderBy(b => b.Length))
@@ -210,10 +227,12 @@ namespace WebAPI.Controllers.V1
                     };
                 }
 
+                _logger.LogWarning("{_principal.Identity.Name} failed to fetch boxes with an exact {dimension} of {dimensionValue}mm or within the range {lowerValue}-{upperValue}mm", _principal.Identity!.Name, dimension, dimensionValue, lowerValue, upperValue);
                 return NotFound(new Response(false, $"No boxes were found with an exact {dimension} of {dimensionValue}mm or within the range {lowerValue}-{upperValue}mm"));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to fetch boxes by dimension", _principal.Identity!.Name);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
@@ -235,6 +254,8 @@ namespace WebAPI.Controllers.V1
             try
             {
                 var box = await _boxService.AddNewBoxAsync(newBox, User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                _logger.LogInformation("{_principal.Identity.Name} added new box with Cutter ID: {newBox.CutterID}", _principal.Identity!.Name, newBox.CutterID);
                 return Created($"api/boxes/{box.CutterID}", new Response<BoxDto>(box)
                 {
                     Succeeded = true,
@@ -243,6 +264,7 @@ namespace WebAPI.Controllers.V1
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to add new box with Cutter ID: {newBox.CutterID}", _principal.Identity!.Name, newBox.CutterID);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
@@ -262,10 +284,13 @@ namespace WebAPI.Controllers.V1
             try
             {
                 await _boxService.UpdateBoxAsync(updateBox);
+
+                _logger.LogInformation("{_principal.Identity.Name} updated box with Cutter ID: {updateBox.CutterID}", _principal.Identity!.Name, updateBox.CutterID);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to update box with Cutter ID: {updateBox.CutterID}", _principal.Identity!.Name, updateBox.CutterID);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
@@ -285,10 +310,13 @@ namespace WebAPI.Controllers.V1
             try
             {
                 await _boxService.DeleteBoxAsync(cutterId);
+
+                _logger.LogInformation("{_principal.Identity.Name} deleted box with Cutter ID: {cutterId}", _principal.Identity!.Name, cutterId);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "{_principal.Identity.Name} failed to delete box with Cutter ID: {cutterId}", _principal.Identity!.Name, cutterId);
                 return BadRequest(new Response(false, ex.Message));
             }
         }
