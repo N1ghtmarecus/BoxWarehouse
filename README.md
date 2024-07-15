@@ -1,6 +1,6 @@
 # BoxWarehouse Solution
 
-This solution is designed to manage a warehouse of boxes, including features such as user authentication, box management, and picture uploads for boxes. 
+This solution is designed to manage a warehouse of cardboard boxes and paper products, including features such as user authentication, box management, and picture uploads for boxes. 
 It utilizes ASP.NET Core for the web API, Entity Framework Core for data access, and SQL Server as the database.
 
 ## Getting Started
